@@ -1,0 +1,45 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+MainPage
+{% endblock %}
+
+{% block content %}
+<main>
+      <div class="main-container">
+        <aside class="categories">
+          <h3>Категории</h3>
+          <ul>
+              <li><a href="#">Программирование</a></li>
+              <li><a href="#">Дизайн</a></li>
+              <li><a href="#">Музыка</a></li>
+              <li><a href="#">Кулинария</a></li>
+          </ul>
+      </aside>
+        <section class="posts">
+            <article class="post">
+              <div class="user-info">
+                <img src="media/ром.jpg" alt="Аватар">
+                <p class="username">Рома</p>
+              </div>
+              <div class="post-content">
+                  <p>Научу Питоне взамен на C#</p>
+                  <button class="read-more">Кинуть заявку</button>
+              </div>
+            </article>
+
+            <article class="post">
+              <div class="user-info">
+                <img src="media/ром.jpg" alt="Аватар">
+                <p class="username">Мома</p>
+              </div>
+              <div class="post-content">
+                  <p>Научу играть на гитаре взамен на вождение</p>
+                  <button class="read-more">Кинуть заявку</button>
+              </div>
+            </article>
+        </section>
+    </div>
+    </section>
+    </main>
+{% endblock %}
