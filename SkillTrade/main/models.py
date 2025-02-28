@@ -6,6 +6,15 @@ from django.urls import reverse
 class SkillsModel(models.Model):
     name = models.CharField(max_length=100,
                             verbose_name="Название")
+    category = models.ForeignKey('CategoryModel', on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Навык'
+        verbose_name_plural = 'Навыки'
+        ordering = ['name']
 
 
 class UserSkills(models.Model):
@@ -24,6 +33,14 @@ class UserSkills(models.Model):
                               null=True)
     level = models.CharField(max_length=10,
                              choices=SkillLevel.choices)
+
+    def __str__(self):
+        return self.user
+
+    class Meta:
+        verbose_name = 'Навык пользователя'
+        verbose_name_plural = 'Навыки пользователей'
+        ordering = ['user']
 
 
 class ExChangeRequestModel(models.Model):
@@ -56,6 +73,14 @@ class ExChangeRequestModel(models.Model):
                               default=ExchangeStatus.PENDING)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.status
+
+    class Meta:
+        verbose_name = 'Запрос обмена'
+        verbose_name_plural = 'Запросы обмена'
+        ordering = ['status']
+
 
 class PostModel(models.Model):
     author = models.ForeignKey(get_user_model(),
@@ -75,6 +100,16 @@ class PostModel(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.author.username
+
+    class Meta:
+        verbose_name = 'Пост'
+        verbose_name_plural = 'Посты'
+        ordering = ['created_at']
+
+
+
 class ReviewModel(models.Model):
     author = models.ForeignKey(get_user_model(),
                              on_delete=models.SET_NULL,
@@ -90,6 +125,14 @@ class ReviewModel(models.Model):
     rating = models.PositiveSmallIntegerField(verbose_name="Рейтинг", choices=[(i, i) for i in range(1, 6)])
     comment = models.TextField(max_length=500, verbose_name="Комментарий")
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.author
+
+    class Meta:
+        verbose_name = 'Отзыв'
+        verbose_name_plural = 'Отзывы'
+        ordering = ['author']
 
 
 class CategoryModel(models.Model):

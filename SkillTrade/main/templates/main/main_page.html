@@ -17,27 +17,18 @@ MainPage
           </ul>
       </aside>
         <section class="posts">
+            {% for post in posts %}
             <article class="post">
               <div class="user-info">
-                <img src="media/ром.jpg" alt="Аватар">
-                <p class="username">Рома</p>
+                <img src="{{ author.avatar.url }}" alt="Аватар">
+                <p class="username">{{ author.username }}</p>
               </div>
               <div class="post-content">
-                  <p>Научу Питоне взамен на C#</p>
+                  <p>Предлогает: {{ post.offered_skill }}. Запрашивает: {{ post.wanted_skill }}</p>
                   <button class="read-more">Кинуть заявку</button>
               </div>
             </article>
-
-            <article class="post">
-              <div class="user-info">
-                <img src="media/ром.jpg" alt="Аватар">
-                <p class="username">Мома</p>
-              </div>
-              <div class="post-content">
-                  <p>Научу играть на гитаре взамен на вождение</p>
-                  <button class="read-more">Кинуть заявку</button>
-              </div>
-            </article>
+            {% endfor %}
         </section>
     </div>
     </section>
