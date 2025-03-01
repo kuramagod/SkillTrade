@@ -97,7 +97,7 @@ class PostModel(models.Model):
                              on_delete=models.SET_NULL,
                              null=True,
                              related_name="wanted_skill")
-
+    category = models.ForeignKey('CategoryModel', on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -148,4 +148,4 @@ class CategoryModel(models.Model):
         ordering = ['name']
 
     def get_absolute_url(self):
-        return reverse('categories', kwargs={'cat_slug': self.slug})
+        return reverse('skill_category', kwargs={'cat_slug': self.slug})

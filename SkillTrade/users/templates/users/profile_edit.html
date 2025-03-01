@@ -1,0 +1,20 @@
+{% extends 'main/base.html' %}
+
+
+{% block title %}
+Profile Edit
+{% endblock %}
+
+
+{% block content %}
+<main>
+        <div class="edit-profile-container">
+            <h1>Редактирование профиля</h1>
+            <form class="edit-profile-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            </form>
+        </div>
+    </main>
+{% endblock %}

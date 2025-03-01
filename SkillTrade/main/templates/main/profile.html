@@ -1,0 +1,53 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Profile
+{% endblock %}
+
+{% block content %}
+<main>
+      <div class="profile-container">
+            <!-- Блок профиля -->
+            <div class="profile-header">
+                {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" alt="Аватар" class="profile-avatar">
+                {% else %}
+                <p>Нет</p>
+                {% endif %}
+                <div class="profile-info">
+                    <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+                    <p class="age">Возраст: {{ user.age }}</p>
+                    <p class="description">{{ user.description }}</p>
+                    <a href="{% url 'users:profile_edit' user.username %}">Редактировать профиль</a>
+                </div>
+            </div>
+
+            <!-- Блок отзывов -->
+            <div class="profile-posts">
+                <h3>Посты</h3>
+
+                <div class="post">
+                    <div class="user-info">
+                        <img src="media/ром.jpg" alt="Аватар">
+                        <p class="username">Рома</p>
+                    </div>
+                    <div class="post-content">
+                        <p>Научу Питоне взамен на C#</p>
+                        <button class="read-more">Кинуть заявку</button>
+                    </div>
+                </div>
+
+                <div class="post">
+                    <div class="user-info">
+                        <img src="media/ром.jpg" alt="Аватар">
+                        <p class="username">Рома</p>
+                    </div>
+                    <div class="post-content">
+                        <p>Научу игре на Pudg взамен на игре на Slark</p>
+                        <button class="read-more">Кинуть заявку</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

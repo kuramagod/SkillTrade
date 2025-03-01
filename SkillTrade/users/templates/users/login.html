@@ -1,0 +1,21 @@
+{% extends 'main/base.html' %}
+
+
+{% block title %}
+Login
+{% endblock %}
+
+
+{% block content %}
+<div class="main-container">
+    <section class="posts">
+        <p class="text-auth">Авторизация</p>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}"/>
+            {{ form.as_p }}
+            <p><button type="submit">Войти</button></p>
+        </form>
+    </section>
+</div>
+{% endblock %}
