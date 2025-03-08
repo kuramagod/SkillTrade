@@ -1,12 +1,16 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
+from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, DetailView, ListView
 
-from .models import PostModel, CategoryModel
+from .forms import CreationRequestForm
+from .models import PostModel, CategoryModel, ExChangeRequestModel, UserSkills, ReviewModel
 
 
-class MainPage(ListView):
+class MainPage(LoginRequiredMixin, ListView):
     model = PostModel
     template_name = 'main/main_page.html'
     context_object_name = 'posts'
@@ -15,32 +19,86 @@ class MainPage(ListView):
         context = super().get_context_data(**kwargs)
         context['categories'] = CategoryModel.objects.all()
         return context
-
-
-
-class SkillCategory(ListView):
-    model = PostModel
-    template_name = 'main/main_page.html'
-    context_object_name = 'posts'
 
     def get_queryset(self):
-        category_slug = self.kwargs['cat_slug']
-        category = CategoryModel.objects.get(slug=category_slug)
-        return PostModel.objects.filter(category_id=category.pk)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['categories'] = CategoryModel.objects.all()
-        return context
+        cat_slug = self.kwargs.get('cat_slug')
+        user = self.request.user
+        posts = PostModel.objects.exclude(author=user)
+        sent_requests = ExChangeRequestModel.objects.filter(receiver=user).values_list('sender_skill_id', flat=True)
+        posts = posts.exclude(offered_skill_id__in=sent_requests)
+        if cat_slug:
+            category = CategoryModel.objects.get(slug=cat_slug)
+            return posts.filter(category_id=category.pk)
+        return posts
 
 
 class ProfilePage(LoginRequiredMixin, DetailView):
-    model = PostModel
+    model = ReviewModel
     template_name = 'main/profile.html'
-    context_object_name = 'post'
+    context_object_name = 'review'
 
     def get_object(self):
         username = self.kwargs.get('username')
         user = get_user_model().objects.get(username=username)
         return user
 
+    def get_queryset(self):
+        username = self.kwargs.get('username')
+        author = get_user_model().objects.get(username=username)
+        return PostModel.objects.filter(author=author)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        username = self.kwargs.get('username')
+        user = get_user_model().objects.get(username=username)
+        context['author'] = user
+        context['review'] = self.get_queryset()
+        return context
+
+
+class RequestPage(LoginRequiredMixin, DetailView):
+    model = ExChangeRequestModel
+    template_name = 'main/request_page.html'
+    context_object_name = 'requests'
+
+    def get_object(self):
+        username = self.kwargs.get('username')
+        user = get_user_model().objects.get(username=username)
+        return ExChangeRequestModel.objects.filter(sender=user) | ExChangeRequestModel.objects.filter(receiver=user)
+
+
+@csrf_protect
+@require_POST
+def update_status(request):
+    request_id = request.POST.get("request_id")
+    status = request.POST.get("status")
+
+    exchange_request = get_object_or_404(ExChangeRequestModel, id=request_id)
+    exchange_request.status = status
+    exchange_request.save()
+
+    return JsonResponse({"message": "Статус обновлён", "new_status": status})
+
+
+def create_request(request, post_id):
+    if request.method == 'POST':
+        try:
+            receiver = request.user
+            post = get_object_or_404(PostModel, id=post_id)
+            sender = post.author
+            sender_skill = post.offered_skill
+            receiver_skill = UserSkills.objects.get(skill=post.wanted_skill)
+            if ExChangeRequestModel.objects.filter(sender=sender, receiver=receiver, sender_skill=sender_skill,
+                                                   receiver_skill=receiver_skill).exists():
+                return JsonResponse({'success': False, 'error': 'Запрос уже существует'})
+            exchange_request = ExChangeRequestModel.objects.create(
+                sender=sender,
+                receiver=receiver,
+                sender_skill=sender_skill,
+                receiver_skill=receiver_skill,
+                status=ExChangeRequestModel.ExchangeStatus.PENDING
+            )
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})

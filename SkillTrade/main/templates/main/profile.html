@@ -8,18 +8,35 @@ Profile
 <main>
       <div class="profile-container">
             <!-- Блок профиля -->
+          {% if author.username == user.username %}
             <div class="profile-header">
-                {% if user.avatar %}
-                <img src="{{ user.avatar.url }}" alt="Аватар" class="profile-avatar">
-                {% else %}
-                <p>Нет</p>
-                {% endif %}
+                <a href="{% url 'users:profile_edit' user.username %}" class="profile-link">
+                <img src="{{ author.avatar.url }}" alt="Аватар" class="profile-avatar"></a>
                 <div class="profile-info">
-                    <h2>{{ user.first_name }} {{ user.last_name }}</h2>
-                    <p class="age">Возраст: {{ user.age }}</p>
-                    <p class="description">{{ user.description }}</p>
-                    <a href="{% url 'users:profile_edit' user.username %}">Редактировать профиль</a>
+                    <h2>{{ author.first_name }} {{ author.last_name }}</h2>
+                    <p class="age">Возраст: {{ author.age }}<br>Расположение: {{ author.location }}</p>
+                    <p class="description">{{ author.description }}</p>
                 </div>
+            </div>
+          {% else %}
+          <div class="profile-header">
+                <img src="{{ author.avatar.url }}" alt="Аватар" class="profile-avatar">
+                <div class="profile-info">
+                    <h2>{{ author.first_name }} {{ author.last_name }}</h2>
+                    <p class="age">Возраст: {{ author.age }}<br>Расположение: {{ author.location }}</p>
+                    <p class="description">{{ author.description }}</p>
+                </div>
+            </div>
+          {% endif %}
+            <div class="user-skills">
+                <h3>Навыки</h3>
+                <ul>
+                     {% for skill in author.skills.all %}
+                     <li>{{ skill.skill }}: {{ skill.level }}</li>
+                     {% empty %}
+                         <li>Нет навыков</li>
+                     {% endfor %}
+                 </ul>
             </div>
 
             <!-- Блок отзывов -->

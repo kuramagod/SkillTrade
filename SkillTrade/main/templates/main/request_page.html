@@ -1,0 +1,78 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Profile
+{% endblock %}
+
+{% block content %}
+<main>
+      <div class="profile-container">
+            <div class="profile-posts">
+                <h3>Входящие запросы</h3>
+                {% for request in requests %}
+                {% if request.receiver == user and request.status != 'Отклонено' %}
+                <div class="post">
+                    <div class="post-content">
+                        <p>{{ request.sender.username }} откликнулся на обмен [{{ request.receiver_skill.skill }} --> {{ request.sender_skill.skill }}]</p>
+                        {% if request.status == 'Ожидание' %}
+                        <button class="accept-button" data-id="{{ request.id }}" data-token="{{ csrf_token }}">Принять</button>
+                        <button class="cancel-button" data-id="{{ request.id }}" data-token="{{ csrf_token }}">Отклонить</button>
+                        {% elif request.status == 'Принято' %}
+                        <button class="read-more">Начать чат</button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+                {% for request in requests %}
+                {% if request.sender == user %}
+                <div class="profile-posts">
+                    <h3>Отправленые запросы</h3>
+                    <div class="post">
+                          <div class="post-content">
+                              <p>к {{ request.receiver.username }}, c вашим '{{ request.sender_skill.skill }}', на его '{{ request.receiver_skill.skill }} </p>
+                              {% if request.status == 'Ожидание' %}
+                              <p>Стасус: <b>{{ request.status }}</b></p>
+                              {% elif request.status == 'Отклонено' %}
+                              <p>Стасус: <b>{{ request.status }}</b></p>
+                              {% elif request.status == 'Принято' %}
+                              <button class="read-more">Начать чат</button>
+                              {% endif %}
+                          </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+
+        </div>
+    </main>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".accept-button, .cancel-button").forEach(button => {
+        button.addEventListener("click", function () {
+            let requestId = this.getAttribute("data-id");
+            let csrfToken = this.getAttribute("data-token");
+            let status = this.classList.contains("accept-button") ? "Принято" : "Отклонено";
+
+            fetch("/update_status/", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams({
+                    request_id: requestId,
+                    status: status
+                })
+            })
+            .then(() => {
+                location.reload();  // Перезагрузка страницы после успешного запроса
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

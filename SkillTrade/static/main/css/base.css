@@ -281,3 +281,24 @@ body {
     background-color: darkblue;
 }
 
+.accept-button {
+    background: rgb(1, 185, 47);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 180px;
+}
+
+.cancel-button {
+    background: rgb(255, 0, 21);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+

@@ -18,9 +18,10 @@
 
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
               <li><a href="{% url 'main_page' %}" class="nav-link {% if request.resolver_match.url_name == 'main_page' or request.resolver_match.url_name == 'skill_category' %}px-2 text-secondary{% else %}px-2 text-white{% endif %}">SearchTrade</a></li>
-              <li><a href="request_page.html" class="nav-link px-2 text-white">Request</a></li>
+              {% if user.is_authenticated %}
+                <li><a href="{% url 'request_page' user.username %}" class="nav-link {% if request.resolver_match.url_name == 'request_page' %}px-2 text-secondary{% else %}px-2 text-white{% endif %}">Request</a></li>
+                {% endif %}
               <li><a href="#" class="nav-link px-2 text-white">Chats</a></li>
-              <li><a href="profile.html" class="nav-link px-2 text-white">Home</a></li>
             </ul>
 
             <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
@@ -33,7 +34,7 @@
             </a>
             <ul class="dropdown-menu text-small">
                 <li><a class="dropdown-item" href="#">New project...</a></li>
-                <li><a class="dropdown-item" href="#">Settings</a></li>
+                <li><a class="dropdown-item" href="{% url 'users:profile_edit' user.username %}">Settings</a></li>
                 <li><a class="dropdown-item" href="{% url 'profile_page' user.username %}">Profile</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <form style="display:inline-block" method="post" action="{% url 'users:logout' %}">
@@ -56,5 +57,6 @@
     {% block content %} {% endblock %}
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+{% block extra_js %} {% endblock %}
 </body>
 </html>

@@ -35,7 +35,7 @@ class UserSkills(models.Model):
                              choices=SkillLevel.choices)
 
     def __str__(self):
-        return self.user
+        return self.skill.name
 
     class Meta:
         verbose_name = 'Навык пользователя'
@@ -60,11 +60,11 @@ class ExChangeRequestModel(models.Model):
                              null=True,
                              default=None,
                              related_name="received")
-    sender_skill = models.ForeignKey(SkillsModel,
+    sender_skill = models.ForeignKey(UserSkills,
                              on_delete=models.SET_NULL,
                              null=True,
                              related_name="skill_sender")
-    receiver_skill = models.ForeignKey(SkillsModel,
+    receiver_skill = models.ForeignKey(UserSkills,
                                      on_delete=models.SET_NULL,
                                      null=True,
                                      related_name="receiver_skill")
@@ -74,7 +74,7 @@ class ExChangeRequestModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.status
+        return f"{self.sender.username}[{self.sender_skill.skill}] to {self.receiver.username}[{self.receiver_skill.skill}]"
 
     class Meta:
         verbose_name = 'Запрос обмена'
@@ -89,7 +89,7 @@ class PostModel(models.Model):
                              null=True,
                              related_name="author_post")
 
-    offered_skill = models.ForeignKey(SkillsModel,
+    offered_skill = models.ForeignKey(UserSkills,
                              on_delete=models.SET_NULL,
                              null=True,
                              related_name="offered_skill")
@@ -101,7 +101,7 @@ class PostModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.author.username
+        return f"{self.author.username}[{self.offered_skill.skill}] to {self.wanted_skill.name}"
 
     class Meta:
         verbose_name = 'Пост'
