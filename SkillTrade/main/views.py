@@ -5,9 +5,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
-from django.views.generic import TemplateView, DetailView, ListView, CreateView
+from django.views.generic import TemplateView, DetailView, ListView, CreateView, DeleteView
 
-from .forms import CreationRequestForm, AddSkillForm
+from .forms import CreationRequestForm, AddSkillProfileForm, AddSkill
 from .models import PostModel, CategoryModel, ExChangeRequestModel, UserSkills, ReviewModel, SkillsModel
 
 
@@ -68,9 +68,9 @@ class RequestPage(LoginRequiredMixin, DetailView):
         return ExChangeRequestModel.objects.filter(sender=user) | ExChangeRequestModel.objects.filter(receiver=user)
 
 
-class AddSkill(CreateView):
-    form_class = AddSkillForm
-    template_name = 'main/add_skill.html'
+class AddSkillProfile(CreateView):
+    form_class = AddSkillProfileForm
+    template_name = 'main/add_skill_profile.html'
 
     def get_success_url(self):
         return reverse_lazy('profile_page', kwargs={'username': self.request.user.username})
@@ -86,6 +86,30 @@ class AddSkill(CreateView):
         form.instance.user = user
         form.instance.skill = skill
         return super().form_valid(form)
+
+
+class AddSkill(CreateView):
+    form_class = AddSkill
+    template_name = 'main/add_skill.html'
+
+    def get_success_url(self):
+        return reverse_lazy('add_skill_profile')
+
+
+class DeleteSkill(DeleteView):
+    model = SkillsModel
+    http_method_names = ['post']
+
+    def get_queryset(self):
+        return UserSkills.objects.filter(user=self.request.user)
+
+    def get_success_url(self):
+        return reverse_lazy('profile_page', kwargs={'username': self.request.user.username})
+
+    def form_valid(self, form):
+        self.object.delete()
+        return redirect(self.get_success_url())
+
 
 
 @csrf_protect

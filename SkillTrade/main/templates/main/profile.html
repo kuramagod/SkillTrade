@@ -11,7 +11,9 @@ Profile
           {% if author.username == user.username %}
             <div class="profile-header">
                 <a href="{% url 'users:profile_edit' user.username %}" class="profile-link">
+                    {% if user.avatar %}
                 <img src="{{ author.avatar.url }}" alt="Аватар" class="profile-avatar"></a>
+                {% endif %}
                 <div class="profile-info">
                     <h2>{{ author.first_name }} {{ author.last_name }}</h2>
                     <p class="age">Возраст: {{ author.age }}<br>Расположение: {{ author.location }}</p>
@@ -32,11 +34,15 @@ Profile
                 <h3>Навыки</h3>
                 <ul>
                      {% for skill in author.skills.all %}
-                     <li>{{ skill.skill }}: {{ skill.level }}</li>
+                     <li>{{ skill.skill }}: {{ skill.level }}
+                         <form action="{% url 'delete_skill' skill.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit">удалить</button>
+                         </form></li>
                      {% empty %}
                          <li>Нет навыков</li>
                      {% endfor %}
-                    <a href="{% url 'add_skill' %}">Добавить навык</a>
+                    <a href="{% url 'add_skill_profile' %}">Добавить навык</a>
                  </ul>
             </div>
 

@@ -9,7 +9,13 @@ class CreationRequestForm(forms.ModelForm):
         fields = ['sender', 'receiver', 'sender_skill', 'receiver_skill', 'status']
 
 
-class AddSkillForm(forms.ModelForm):
+class AddSkillProfileForm(forms.ModelForm):
     class Meta:
         model = UserSkills
         fields = ['skill', 'level']
+
+
+class AddSkill(forms.ModelForm):
+    class Meta:
+        model = SkillsModel
+        fields = ['name', 'category']
