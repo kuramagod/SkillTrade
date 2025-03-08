@@ -1,0 +1,26 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Add Skill
+{% endblock %}
+
+{% block content %}
+<main>
+      <div class="profile-container">
+            <div class="profile-posts">
+                <h3>Добавление навыка</h3>
+                <div class="post">
+                    <div class="post-content">
+                        <form id="skill-form" action="{% url 'add_skill' %}" method="POST">
+                            {% csrf_token %}
+                             {{ form.as_p }}
+                            <button type="submit">Сохранить</button>
+                        </form>
+                    </div>
+                </div>
+        </div>
+</main>
+{% endblock %}
+{% block extra_js %}
+
+{% endblock %}

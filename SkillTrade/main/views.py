@@ -2,12 +2,13 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
-from django.views.generic import TemplateView, DetailView, ListView
+from django.views.generic import TemplateView, DetailView, ListView, CreateView
 
-from .forms import CreationRequestForm
-from .models import PostModel, CategoryModel, ExChangeRequestModel, UserSkills, ReviewModel
+from .forms import CreationRequestForm, AddSkillForm
+from .models import PostModel, CategoryModel, ExChangeRequestModel, UserSkills, ReviewModel, SkillsModel
 
 
 class MainPage(LoginRequiredMixin, ListView):
@@ -65,6 +66,26 @@ class RequestPage(LoginRequiredMixin, DetailView):
         username = self.kwargs.get('username')
         user = get_user_model().objects.get(username=username)
         return ExChangeRequestModel.objects.filter(sender=user) | ExChangeRequestModel.objects.filter(receiver=user)
+
+
+class AddSkill(CreateView):
+    form_class = AddSkillForm
+    template_name = 'main/add_skill.html'
+
+    def get_success_url(self):
+        return reverse_lazy('profile_page', kwargs={'username': self.request.user.username})
+
+    def form_valid(self, form):
+        user = self.request.user
+        skill  = form.cleaned_data.get('skill')
+
+        if UserSkills.objects.filter(user=user, skill=skill).exists():
+            form.add_error(None, 'Навык уже существует')
+            return self.form_invalid(form)
+
+        form.instance.user = user
+        form.instance.skill = skill
+        return super().form_valid(form)
 
 
 @csrf_protect

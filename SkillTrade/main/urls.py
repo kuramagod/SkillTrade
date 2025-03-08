@@ -10,4 +10,5 @@ urlpatterns = [
     path('request/<str:username>', views.RequestPage.as_view(), name="request_page"),
     path('create-request/<int:post_id>', views.create_request, name='create_request'),
     path('update_status/', views.update_status, name='update_status'),
+    path('add_skill/', views.AddSkill.as_view(), name='add_skill')
 ]
