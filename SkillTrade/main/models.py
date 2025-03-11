@@ -109,7 +109,6 @@ class PostModel(models.Model):
         ordering = ['created_at']
 
 
-
 class ReviewModel(models.Model):
     author = models.ForeignKey(get_user_model(),
                              on_delete=models.SET_NULL,

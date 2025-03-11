@@ -18,7 +18,10 @@ Profile
                         <button class="accept-button" data-id="{{ request.id }}" data-token="{{ csrf_token }}">Принять</button>
                         <button class="cancel-button" data-id="{{ request.id }}" data-token="{{ csrf_token }}">Отклонить</button>
                         {% elif request.status == 'Принято' %}
-                        <button class="read-more">Начать чат</button>
+                        <form class="start_chat_form" method="post" action="{% url 'start_chat' request.id %}">
+                            {% csrf_token %}
+                        <button class="read-more start_chat_form-btn" type="submit">Начать чат</button>
+                            </form>
                         {% endif %}
                     </div>
                 </div>
@@ -37,14 +40,16 @@ Profile
                               {% elif request.status == 'Отклонено' %}
                               <p>Стасус: <b>{{ request.status }}</b></p>
                               {% elif request.status == 'Принято' %}
-                              <button class="read-more">Начать чат</button>
+                              <form class="start_chat_form" method="post" action="{% url 'start_chat' request.id %}">
+                                {% csrf_token %}
+                                <button class="read-more start_chat_form-btn" type="submit">Начать чат</button>
+                                </form>
                               {% endif %}
                           </div>
                     </div>
                 </div>
                 {% endif %}
                 {% endfor %}
-
         </div>
     </main>
 {% endblock %}

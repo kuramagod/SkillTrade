@@ -13,4 +13,5 @@ urlpatterns = [
     path('add_skill_profile/', views.AddSkillProfile.as_view(), name='add_skill_profile'),
     path('add_skill/', views.AddSkill.as_view(), name='add_skill'),
     path('delete/<int:pk>/', views.DeleteSkill.as_view(), name="delete_skill"),
+    path('start_chat/<int:request_id>', views.start_chat, name="start_chat")
 ]

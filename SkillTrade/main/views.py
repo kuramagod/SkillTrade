@@ -9,6 +9,7 @@ from django.views.generic import TemplateView, DetailView, ListView, CreateView,
 
 from .forms import CreationRequestForm, AddSkillProfileForm, AddSkill
 from .models import PostModel, CategoryModel, ExChangeRequestModel, UserSkills, ReviewModel, SkillsModel
+from chat.models import Chat
 
 
 class MainPage(LoginRequiredMixin, ListView):
@@ -95,7 +96,6 @@ class AddSkill(CreateView):
     def get_success_url(self):
         return reverse_lazy('add_skill_profile')
 
-
 class DeleteSkill(DeleteView):
     model = SkillsModel
     http_method_names = ['post']
@@ -110,6 +110,22 @@ class DeleteSkill(DeleteView):
         self.object.delete()
         return redirect(self.get_success_url())
 
+
+def start_chat(request, request_id):
+    if request.method == 'POST':
+        current_user = request.user
+        exchange = get_object_or_404(ExChangeRequestModel, id=request_id)
+        sender = exchange.sender
+        if Chat.objects.filter(participants=current_user).filter(participants=sender).exists():
+            chat_id = Chat.objects.filter(participants=current_user).filter(participants=sender).values()[0]['id']
+            return redirect(reverse_lazy('chats:chat_room', args=[chat_id]))
+
+        chat = Chat.objects.create()
+        chat.participants.add(current_user, sender)
+        chat.save()
+        return JsonResponse({'success': True, 'current': current_user.username, 'sender': sender.username})
+
+    return JsonResponse({'success': False})
 
 
 @csrf_protect
@@ -136,6 +152,7 @@ def create_request(request, post_id):
             if ExChangeRequestModel.objects.filter(sender=sender, receiver=receiver, sender_skill=sender_skill,
                                                    receiver_skill=receiver_skill).exists():
                 return JsonResponse({'success': False, 'error': 'Запрос уже существует'})
+
             exchange_request = ExChangeRequestModel.objects.create(
                 sender=sender,
                 receiver=receiver,
