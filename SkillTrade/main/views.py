@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, DetailView, ListView, CreateView, DeleteView
 
-import settings
+from django.conf import settings
 from .forms import CreationRequestForm, AddSkillProfileForm, AddSkill
 from .models import PostModel, ExChangeRequestModel, UserSkills, ReviewModel, SkillsModel
 from chat.models import Chat

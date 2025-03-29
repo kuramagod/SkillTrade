@@ -6,85 +6,85 @@ MainPage
 
 {% block content %}
 <main>
-      <div class="main-container">
+    <div class="main-container">
         <aside class="categories">
-          <h3>Категории</h3>
+            <h3>Категории</h3>
             <ul>
-              {% for skill in skills %}
-              <li><a href="{{ skill.get_absolute_url }}">{{ skill.name }}</a></li>
-              {% endfor %}
-          </ul>
-      </aside>
-          <section class="posts">
+                {% for skill in skills %}
+                <li><a href="{{ skill.get_absolute_url }}">{{ skill.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </aside>
+        <section class="posts">
             {% for post in posts %}
             <article class="post">
-              <div class="user-info">
-                  {% if post.author.avatar %}
-                <img src="{{ post.author.avatar.url }}" alt="Аватар">
-                <p class="username">{{ post.author.username }}</p>
-                  {% else %}
-                  <img src="{{ default_image }}" alt="Аватар">
-                <p class="username">{{ post.author.username }}</p>
-                  {% endif %}
-              </div>
-              <div class="post-content">
-                  <p>Предлогает: {{ post.offered_skill.skill }}. Запрашивает: {{ post.wanted_skill.name }}</p>
+                <div class="user-info">
+                    {% if post.author.avatar %}
+                    <img src="{{ post.author.avatar.url }}" alt="Аватар">
+                    <p class="username">{{ post.author.username }}</p>
+                    {% else %}
+                    <img src="{{ default_image }}" alt="Аватар">
+                    <p class="username">{{ post.author.username }}</p>
+                    {% endif %}
+                </div>
+                <div class="post-content">
+                    <p>Предлогает: {{ post.offered_skill.skill }}. Запрашивает: {{ post.wanted_skill.name }}</p>
                     {% if user.is_authenticated %}
-                      <form class="exchange-request-form" method="post" action="{% url 'create_request' post.id %}">
-                    {% csrf_token %}
+                    <form class="exchange-request-form" method="post" action="{% url 'create_request' post.id %}">
+                        {% csrf_token %}
                         <button class="read-more exchange-request-btn" type="submit">Кинуть заявку</button>
-                        </form>
+                    </form>
                     {% else %}
                     <a href="{% url 'users:login' %}">
                         <button class="read-more exchange-request-btn" type="submit">Кинуть заявку</button>
                     </a>
                     {% endif %}
 
-                <span class="message-container" style="display: none; color: green;">Отправлено</span>
-              </div>
+                    <span class="message-container" style="display: none; color: green;">Отправлено</span>
+                </div>
             </article>
             {% endfor %}
-          </section>
+        </section>
     </div>
     </section>
 </main>
 {% endblock %}
 {% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.exchange-request-form').forEach(form => {
-        form.addEventListener('submit', function (event) {
-            event.preventDefault(); // Отменяем стандартную отправку формы
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.exchange-request-form').forEach(form => {
+            form.addEventListener('submit', function (event) {
+                event.preventDefault(); // Отменяем стандартную отправку формы
 
-            const form = event.target;
-            const postId = form.getAttribute('action').split('/').pop(); // Получаем ID поста из URL
-            const messageContainer = form.nextElementSibling; // Блок "Отправлено"
-            const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+                const form = event.target;
+                const postId = form.getAttribute('action').split('/').pop(); // Получаем ID поста из URL
+                const messageContainer = form.nextElementSibling; // Блок "Отправлено"
+                const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
 
-            fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': csrfToken,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({})
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Показываем сообщение "Отправлено" и скрываем кнопку
-                    messageContainer.style.display = 'inline';
-                    form.style.display = 'none';
-                } else {
-                    alert('Ошибка: ' + data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Показываем сообщение "Отправлено" и скрываем кнопку
+                        messageContainer.style.display = 'inline';
+                        form.style.display = 'none';
+                    } else {
+                        alert('Ошибка: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                });
             });
         });
     });
-});
 
 </script>
- {% endblock %}
+{% endblock %}

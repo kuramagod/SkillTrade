@@ -10,11 +10,29 @@ Register
 <div class="main-container">
     <section class="posts">
         <p class="text-auth">Регистрация</p>
-        <form method="post">
+        <form class="edit-profile-form" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <input type="hidden" name="next" value="{{ next }}"/>
-            {{ form.as_p }}
-            <p><button type="submit">Зарегистрироваться</button></p>
+            {% for field in form %}
+            <p>
+                <label class="form-label" for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                </label>
+
+                {% if field.name == 'birth_date' %}
+                <input type="date"
+                       id="{{ field.id_for_label }}"
+                       name="{{ field.name }}"
+                       value="{{ field.value|date:'Y-m-d' }}"
+                       min="1900-01-01"
+                       class="form-control"/>
+                {% else %}
+                {{ field }}
+                {% endif %}
+                <div class="form-error">{{ field.errors }}</div>
+            </p>
+            {% endfor %}
+            <div class="form-error">{{ form.non_field_errors }}</div>
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
         </form>
     </section>
 </div>
