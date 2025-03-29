@@ -137,3 +137,5 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_REDIRECT_URL = 'main_page'
 LOGOUT_REDIRECT_URL = 'main_page'
 LOGIN_URL = 'users:login'
+
+DEFAULT_USER_IMAGE = MEDIA_URL + 'users/default.jpg'

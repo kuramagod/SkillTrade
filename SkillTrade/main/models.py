@@ -1,20 +1,29 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from slugify import slugify
 
 
 class SkillsModel(models.Model):
     name = models.CharField(max_length=100,
                             verbose_name="Название")
-    category = models.ForeignKey('CategoryModel', on_delete=models.SET_NULL, null=True)
+    slug = models.SlugField(max_length=255, unique=True, db_index=True)
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Навык'
         verbose_name_plural = 'Навыки'
         ordering = ['name']
+
+    def get_absolute_url(self):
+        return reverse('skill_category', kwargs={'skill_slug': self.slug})
 
 
 class UserSkills(models.Model):
@@ -97,7 +106,6 @@ class PostModel(models.Model):
                              on_delete=models.SET_NULL,
                              null=True,
                              related_name="wanted_skill")
-    category = models.ForeignKey('CategoryModel', on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -133,18 +141,3 @@ class ReviewModel(models.Model):
         verbose_name_plural = 'Отзывы'
         ordering = ['author']
 
-
-class CategoryModel(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Название")
-    slug = models.SlugField(max_length=255, unique=True, db_index=True)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = 'Категория'
-        verbose_name_plural = 'Категории'
-        ordering = ['name']
-
-    def get_absolute_url(self):
-        return reverse('skill_category', kwargs={'cat_slug': self.slug})

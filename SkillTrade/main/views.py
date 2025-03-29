@@ -7,30 +7,37 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, DetailView, ListView, CreateView, DeleteView
 
+import settings
 from .forms import CreationRequestForm, AddSkillProfileForm, AddSkill
-from .models import PostModel, CategoryModel, ExChangeRequestModel, UserSkills, ReviewModel, SkillsModel
+from .models import PostModel, ExChangeRequestModel, UserSkills, ReviewModel, SkillsModel
 from chat.models import Chat
 
 
-class MainPage(LoginRequiredMixin, ListView):
+class MainPage(ListView):
     model = PostModel
     template_name = 'main/main_page.html'
     context_object_name = 'posts'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = CategoryModel.objects.all()
+        context['skills'] = SkillsModel.objects.all()
+        context['default_image'] = settings.DEFAULT_USER_IMAGE
         return context
 
     def get_queryset(self):
-        cat_slug = self.kwargs.get('cat_slug')
+        skill_slug = self.kwargs.get('skill_slug')
         user = self.request.user
+        if not user.is_authenticated:
+            posts = PostModel.objects.all()
+            if skill_slug:
+                posts = posts.filter(wanted_skill__slug__exact=skill_slug)
+            return posts
         posts = PostModel.objects.exclude(author=user)
         sent_requests = ExChangeRequestModel.objects.filter(receiver=user).values_list('sender_skill_id', flat=True)
+        print(sent_requests)
         posts = posts.exclude(offered_skill_id__in=sent_requests)
-        if cat_slug:
-            category = CategoryModel.objects.get(slug=cat_slug)
-            return posts.filter(category_id=category.pk)
+        if skill_slug:
+            posts = posts.filter(wanted_skill__slug__exact=skill_slug)
         return posts
 
 
@@ -55,6 +62,7 @@ class ProfilePage(LoginRequiredMixin, DetailView):
         user = get_user_model().objects.get(username=username)
         context['author'] = user
         context['review'] = self.get_queryset()
+        context['default_image'] = settings.DEFAULT_USER_IMAGE
         return context
 
 
@@ -78,7 +86,7 @@ class AddSkillProfile(CreateView):
 
     def form_valid(self, form):
         user = self.request.user
-        skill  = form.cleaned_data.get('skill')
+        skill = form.cleaned_data.get('skill')
 
         if UserSkills.objects.filter(user=user, skill=skill).exists():
             form.add_error(None, 'Навык уже существует')
@@ -95,6 +103,7 @@ class AddSkill(CreateView):
 
     def get_success_url(self):
         return reverse_lazy('add_skill_profile')
+
 
 class DeleteSkill(DeleteView):
     model = SkillsModel

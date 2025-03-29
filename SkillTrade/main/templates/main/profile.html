@@ -11,13 +11,22 @@ Profile
           {% if author.username == user.username %}
             <div class="profile-header">
                 <a href="{% url 'users:profile_edit' user.username %}" class="profile-link">
-                    {% if user.avatar %}
+                {% if user.avatar %}
                 <img src="{{ author.avatar.url }}" alt="Аватар" class="profile-avatar"></a>
+                {% else %}
+                <img src="{{ default_image }}" alt="Аватар" class="profile-avatar"></a>
                 {% endif %}
                 <div class="profile-info">
                     <h2>{{ author.first_name }} {{ author.last_name }}</h2>
+                    {% if author.location %}
                     <p class="age">Возраст: {{ author.age }}<br>Расположение: {{ author.location }}</p>
+                    {% else %}
+                    <p class="age">Возраст: {{ author.age }}</p>
+                    {% endif %}
+                    {% if author.description %}
                     <p class="description">{{ author.description }}</p>
+                    {% else %}
+                    {% endif %}
                 </div>
             </div>
           {% else %}

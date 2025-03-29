@@ -9,9 +9,9 @@ MainPage
       <div class="main-container">
         <aside class="categories">
           <h3>Категории</h3>
-          <ul>
-              {% for category in categories %}
-              <li><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>
+            <ul>
+              {% for skill in skills %}
+              <li><a href="{{ skill.get_absolute_url }}">{{ skill.name }}</a></li>
               {% endfor %}
           </ul>
       </aside>
@@ -19,15 +19,27 @@ MainPage
             {% for post in posts %}
             <article class="post">
               <div class="user-info">
+                  {% if post.author.avatar %}
                 <img src="{{ post.author.avatar.url }}" alt="Аватар">
                 <p class="username">{{ post.author.username }}</p>
+                  {% else %}
+                  <img src="{{ default_image }}" alt="Аватар">
+                <p class="username">{{ post.author.username }}</p>
+                  {% endif %}
               </div>
               <div class="post-content">
                   <p>Предлогает: {{ post.offered_skill.skill }}. Запрашивает: {{ post.wanted_skill.name }}</p>
+                    {% if user.is_authenticated %}
                       <form class="exchange-request-form" method="post" action="{% url 'create_request' post.id %}">
                     {% csrf_token %}
                         <button class="read-more exchange-request-btn" type="submit">Кинуть заявку</button>
                         </form>
+                    {% else %}
+                    <a href="{% url 'users:login' %}">
+                        <button class="read-more exchange-request-btn" type="submit">Кинуть заявку</button>
+                    </a>
+                    {% endif %}
+
                 <span class="message-container" style="display: none; color: green;">Отправлено</span>
               </div>
             </article>

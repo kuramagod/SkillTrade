@@ -13,6 +13,7 @@ class LoginUser(LoginView):
     template_name = 'users/login.html'
     redirect_authenticated_user = 'main_page'
 
+
 class RegisterUser(CreateView):
     form_class = RegisterUserForm
     template_name = 'users/register.html'
