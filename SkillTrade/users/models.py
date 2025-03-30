@@ -7,7 +7,7 @@ import datetime
 class User(AbstractUser):
     avatar = models.ImageField(upload_to="users/%Y/%m/%d/", blank=True, null=True, verbose_name='Аватарка')
     description = models.TextField(max_length=250, blank=True, null=True, verbose_name="Описание") # убрать None
-    location = models.CharField(max_length=100, blank=True, null=True, verbose_name="Расположение")
+    location = models.CharField(max_length=100, blank=True, null=True, verbose_name="Город")
     rating = models.FloatField(verbose_name="Рейтинг", default=0.0)
     birth_date = models.DateField(verbose_name="Дата рождения", null=True, blank=True, default=datetime.date.today)
     age = models.IntegerField(verbose_name='Возраст', null=True, blank=True)

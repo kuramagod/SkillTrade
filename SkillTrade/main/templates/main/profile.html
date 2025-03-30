@@ -24,7 +24,7 @@ Profile
                 <div class="profile-info">
                     <h2>{{ author.first_name }} {{ author.last_name }}</h2>
                     {% if author.location %}
-                    <p class="age">Возраст: {{ author.age }}<br>Расположение: {{ author.location }}</p>
+                    <p class="age">Возраст: {{ author.age }}<br>Город: {{ author.location }}</p>
                     {% else %}
                     <p class="age">Возраст: {{ author.age }}</p>
                     {% endif %}
@@ -56,7 +56,9 @@ Profile
                      {% empty %}
                          <li>Нет навыков</li>
                      {% endfor %}
-                    <a href="{% url 'add_skill_profile' %}">Добавить навык</a>
+                    <a href="{% url 'add_skill_profile' %}">
+                        <button type="button">Добавить навык</button>
+                    </a>
                  </ul>
             </div>
 

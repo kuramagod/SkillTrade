@@ -34,9 +34,8 @@ class MainPage(DefaultImageMixin, ListView):
                 posts = posts.filter(wanted_skill__slug__exact=skill_slug)
             return posts
         posts = PostModel.objects.exclude(author=user)
-        sent_requests = ExChangeRequestModel.objects.filter(receiver=user).values_list('sender_skill_id', flat=True)
-        print(sent_requests)
-        posts = posts.exclude(offered_skill_id__in=sent_requests)
+        current_user_skills = UserSkills.objects.filter(user=user).values_list('skill', flat=True)
+        posts = posts.filter(wanted_skill__in=current_user_skills)
         if skill_slug:
             posts = posts.filter(wanted_skill__slug__exact=skill_slug)
         return posts

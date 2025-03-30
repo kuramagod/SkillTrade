@@ -101,11 +101,11 @@ class PostModel(models.Model):
     offered_skill = models.ForeignKey(UserSkills,
                              on_delete=models.SET_NULL,
                              null=True,
-                             related_name="offered_skill")
+                             related_name="Предлагает")
     wanted_skill = models.ForeignKey(SkillsModel,
                              on_delete=models.SET_NULL,
                              null=True,
-                             related_name="wanted_skill")
+                             related_name="Запрашивает")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

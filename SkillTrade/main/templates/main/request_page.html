@@ -15,11 +15,10 @@ Profile
         <div class="profile-posts">
             <h3>Входящие запросы</h3>
             {% for request in requests %}
-            {% if request.receiver == user and request.status != 'Отклонено' %}
+            {% if request.sender == user and request.status != 'Отклонено' %}
             <div class="post">
                 <div class="post-content">
-                    <p>{{ request.sender.username }} откликнулся на обмен [{{ request.receiver_skill.skill }} --> {{
-                        request.sender_skill.skill }}]</p>
+                    <p>{{ request.receiver.username }} откликнулся на ваше предложение ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
                     {% if request.status == 'Ожидание' %}
                     <button class="accept-button" data-id="{{ request.id }}" data-token="{{ csrf_token }}">Принять
                     </button>
@@ -37,13 +36,12 @@ Profile
             {% endfor %}
         </div>
         {% for request in requests %}
-        {% if request.sender == user %}
+        {% if request.sender != user %}
         <div class="profile-posts">
             <h3>Отправленые запросы</h3>
             <div class="post">
                 <div class="post-content">
-                    <p>к {{ request.receiver.username }}, c вашим '{{ request.sender_skill.skill }}', на его '{{
-                        request.receiver_skill.skill }} </p>
+                    <p>к {{ request.sender.username }}, на предложение ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }}) </p>
                     {% if request.status == 'Ожидание' %}
                     <p>Стасус: <b>{{ request.status }}</b></p>
                     {% elif request.status == 'Отклонено' %}
