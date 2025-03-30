@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, DetailView, ListView, CreateView, DeleteView
 
-from django.conf import settings
+
 from .forms import CreationRequestForm, AddSkillProfileForm, AddSkill
 from .models import PostModel, ExChangeRequestModel, UserSkills, ReviewModel, SkillsModel
 from chat.models import Chat
@@ -22,7 +22,9 @@ class MainPage(DefaultImageMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['skills'] = SkillsModel.objects.all()
+        existing_offered_post_skills = PostModel.objects.values_list("offered_skill__skill__name", flat=True).distinct()
+        existing_wanted_post_skills = PostModel.objects.values_list("wanted_skill__name", flat=True).distinct()
+        context['skills'] = SkillsModel.objects.filter(name__in=existing_offered_post_skills) | SkillsModel.objects.filter(name__in=existing_wanted_post_skills)
         return context
 
     def get_queryset(self):
