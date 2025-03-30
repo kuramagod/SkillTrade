@@ -1,5 +1,9 @@
 {% extends 'main/base.html' %}
 
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'main/css/form.css' %}">
+{% endblock %}
 
 {% block title %}
 Register
@@ -32,7 +36,7 @@ Register
             </p>
             {% endfor %}
             <div class="form-error">{{ form.non_field_errors }}</div>
-            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
         </form>
     </section>
 </div>

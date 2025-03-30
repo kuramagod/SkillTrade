@@ -1,0 +1,114 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f7fa;
+    color: #333;
+}
+
+.main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.posts {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.text-auth {
+    font-size: 28px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.edit-profile-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #4a5568;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="date"]:focus,
+textarea:focus {
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+    outline: none;
+}
+
+input[type="date"] {
+    appearance: none;
+    background-color: white;
+}
+
+.btn {
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-primary {
+    background-color: #4299e1;
+}
+
+.btn-primary:hover {
+    background-color: #3182ce;
+}
+
+.form-error {
+    color: #e53e3e;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* Анимация при фокусе */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.edit-profile-form p {
+    animation: fadeIn 0.3s ease forwards;
+    opacity: 0;
+}
+
+/* Последовательное появление полей */
+.edit-profile-form p:nth-child(1) { animation-delay: 0.1s; }
+.edit-profile-form p:nth-child(2) { animation-delay: 0.2s; }
+.edit-profile-form p:nth-child(3) { animation-delay: 0.3s; }
+.edit-profile-form p:nth-child(4) { animation-delay: 0.4s; }
+.edit-profile-form p:nth-child(5) { animation-delay: 0.5s; }
+.edit-profile-form p:nth-child(6) { animation-delay: 0.6s; }

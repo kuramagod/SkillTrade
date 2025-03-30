@@ -1,5 +1,9 @@
 {% extends 'main/base.html' %}
 
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'main/css/base.css' %}">
+{% endblock %}
 
 {% block title %}
 Profile Edit

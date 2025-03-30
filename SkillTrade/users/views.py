@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
 
 from .forms import LoginUserForm, RegisterUserForm, ProfileUserForm
+from main.utils import DefaultImageMixin
 
 
 class LoginUser(LoginView):
@@ -20,7 +21,7 @@ class RegisterUser(CreateView):
     success_url = reverse_lazy('users:login')
 
 
-class ProfileUser(LoginRequiredMixin, UpdateView):
+class ProfileUser(LoginRequiredMixin, DefaultImageMixin, UpdateView):
     model = get_user_model()
     form_class = ProfileUserForm
     template_name = 'users/profile_edit.html'

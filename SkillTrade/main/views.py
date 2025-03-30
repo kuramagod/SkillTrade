@@ -12,8 +12,10 @@ from .forms import CreationRequestForm, AddSkillProfileForm, AddSkill
 from .models import PostModel, ExChangeRequestModel, UserSkills, ReviewModel, SkillsModel
 from chat.models import Chat
 
+from .utils import DefaultImageMixin
 
-class MainPage(ListView):
+
+class MainPage(DefaultImageMixin, ListView):
     model = PostModel
     template_name = 'main/main_page.html'
     context_object_name = 'posts'
@@ -21,7 +23,6 @@ class MainPage(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['skills'] = SkillsModel.objects.all()
-        context['default_image'] = settings.DEFAULT_USER_IMAGE
         return context
 
     def get_queryset(self):
@@ -41,7 +42,7 @@ class MainPage(ListView):
         return posts
 
 
-class ProfilePage(LoginRequiredMixin, DetailView):
+class ProfilePage(LoginRequiredMixin, DefaultImageMixin, DetailView):
     model = ReviewModel
     template_name = 'main/profile.html'
     context_object_name = 'review'
@@ -62,11 +63,10 @@ class ProfilePage(LoginRequiredMixin, DetailView):
         user = get_user_model().objects.get(username=username)
         context['author'] = user
         context['review'] = self.get_queryset()
-        context['default_image'] = settings.DEFAULT_USER_IMAGE
         return context
 
 
-class RequestPage(LoginRequiredMixin, DetailView):
+class RequestPage(LoginRequiredMixin, DefaultImageMixin, DetailView):
     model = ExChangeRequestModel
     template_name = 'main/request_page.html'
     context_object_name = 'requests'
@@ -77,7 +77,7 @@ class RequestPage(LoginRequiredMixin, DetailView):
         return ExChangeRequestModel.objects.filter(sender=user) | ExChangeRequestModel.objects.filter(receiver=user)
 
 
-class AddSkillProfile(CreateView):
+class AddSkillProfile(DefaultImageMixin, CreateView):
     form_class = AddSkillProfileForm
     template_name = 'main/add_skill_profile.html'
 
@@ -97,7 +97,7 @@ class AddSkillProfile(CreateView):
         return super().form_valid(form)
 
 
-class AddSkill(CreateView):
+class AddSkill(DefaultImageMixin, CreateView):
     form_class = AddSkill
     template_name = 'main/add_skill.html'
 
@@ -105,7 +105,7 @@ class AddSkill(CreateView):
         return reverse_lazy('add_skill_profile')
 
 
-class DeleteSkill(DeleteView):
+class DeleteSkill(DefaultImageMixin, DeleteView):
     model = SkillsModel
     http_method_names = ['post']
 

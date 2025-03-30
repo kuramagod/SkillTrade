@@ -1,5 +1,9 @@
 {% extends 'main/base.html' %}
 
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'main/css/form.css' %}">
+{% endblock %}
 
 {% block title %}
 Login
@@ -14,7 +18,7 @@ Login
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ next }}"/>
             {{ form.as_p }}
-            <p><button type="submit">Войти</button></p>
+            <p><button  type="submit" class="btn btn-primary"">Войти</button></p>
         </form>
     </section>
 </div>
