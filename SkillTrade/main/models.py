@@ -96,7 +96,7 @@ class PostModel(models.Model):
                              on_delete=models.SET_NULL,
                              default=None,
                              null=True,
-                             related_name="author_post")
+                             related_name="автор_поста")
 
     offered_skill = models.ForeignKey(UserSkills,
                              on_delete=models.SET_NULL,

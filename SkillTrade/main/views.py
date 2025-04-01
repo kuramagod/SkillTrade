@@ -8,7 +8,7 @@ from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, DetailView, ListView, CreateView, DeleteView
 
 
-from .forms import CreationRequestForm, AddSkillProfileForm, AddSkill
+from .forms import CreationRequestForm, AddSkillProfileForm, AddSkill, AddPostForm
 from .models import PostModel, ExChangeRequestModel, UserSkills, ReviewModel, SkillsModel
 from chat.models import Chat
 
@@ -95,6 +95,31 @@ class AddSkillProfile(DefaultImageMixin, CreateView):
 
         form.instance.user = user
         form.instance.skill = skill
+        return super().form_valid(form)
+
+
+class AddPost(DefaultImageMixin, CreateView):
+    form_class = AddPostForm
+    template_name = 'main/add_post.html'
+    success_url = reverse_lazy('main_page')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        user = self.request.user
+        offered_skill = form.cleaned_data.get('offered_skill')
+        wanted_skill = form.cleaned_data.get('wanted_skill')
+
+        if PostModel.objects.filter(author=user, offered_skill=offered_skill, wanted_skill=wanted_skill).exists():
+            form.add_error(None, 'Такой пост уже существует')
+            return self.form_invalid(form)
+
+        form.instance.author = user
+        form.instance.offered_skill = offered_skill
+        form.instance.wanted_skill = wanted_skill
         return super().form_valid(form)
 
 

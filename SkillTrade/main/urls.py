@@ -8,6 +8,7 @@ urlpatterns = [
     path('skill_filter/<slug:skill_slug>', views.MainPage.as_view(), name="skill_category"),
     path('profile/<str:username>', views.ProfilePage.as_view(), name="profile_page"),
     path('request/<str:username>', views.RequestPage.as_view(), name="request_page"),
+    path('add_exchange', views.AddPost.as_view(), name='add_exchange'),
     path('create-request/<int:post_id>', views.create_request, name='create_request'),
     path('update_status/', views.update_status, name='update_status'),
     path('add_skill_profile/', views.AddSkillProfile.as_view(), name='add_skill_profile'),

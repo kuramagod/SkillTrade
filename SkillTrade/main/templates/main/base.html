@@ -51,7 +51,7 @@
                     {% endif %}
                 </a>
                 <ul class="dropdown-menu text-small">
-                    <li><a class="dropdown-item" href="#">Create Post</a></li>
+                    <li><a class="dropdown-item" href="{% url 'add_exchange' %}">Create Post</a></li>
                     <li><a class="dropdown-item" href="{% url 'users:profile_edit' user.username %}">Settings</a></li>
                     <li><a class="dropdown-item" href="{% url 'profile_page' user.username %}">Profile</a></li>
                     <li>
