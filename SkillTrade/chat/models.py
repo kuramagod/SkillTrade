@@ -5,6 +5,7 @@ from django.urls import reverse
 
 
 class Chat(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Иия чата")
     participants = models.ManyToManyField(get_user_model(), related_name='chats')
 
     def __str__(self):

@@ -151,16 +151,28 @@ def start_chat(request, request_id):
         current_user = request.user
         exchange = get_object_or_404(ExChangeRequestModel, id=request_id)
         sender = exchange.sender
+        receiver = exchange.receiver
         if Chat.objects.filter(participants=current_user).filter(participants=sender).exists():
             chat_id = Chat.objects.filter(participants=current_user).filter(participants=sender).values()[0]['id']
             return redirect(reverse_lazy('chats:chat_room', args=[chat_id]))
 
         chat = Chat.objects.create()
-        chat.participants.add(current_user, sender)
+        chat.name = f"Чат {exchange.sender_skill} - {exchange.receiver_skill}"
+        if current_user == sender:
+            chat.participants.add(current_user, receiver)
+        else:
+            chat.participants.add(current_user, sender)
+        chat_id = chat.id
         chat.save()
-        return JsonResponse({'success': True, 'current': current_user.username, 'sender': sender.username})
+        return redirect(reverse_lazy('chats:chat_room', args=[chat_id]))
 
     return JsonResponse({'success': False})
+
+
+def show_chats(request):
+    current_user = request.user
+    chats = Chat.objects.filter(participants=current_user)
+    return render(request, 'main/chats.html', {'chats': chats})
 
 
 @csrf_protect

@@ -1,0 +1,27 @@
+{% extends 'main/base.html' %}
+
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'main/css/base.css' %}">
+{% endblock %}
+
+{% block title %}
+Chats
+{% endblock %}
+
+{% block content %}
+<main>
+    <div class="profile-container">
+        <div class="profile-posts">
+            <h3>Чаты</h3>
+            <div class="post">
+                <div class="post-content">
+                  {% for chat in chats %}
+                      <p>{{ chat.name }}</p> <button onclick="window.location.href='{% url 'chats:chat_room' chat.id %}'" class="read-more start_chat_form-btn" >Чат</button>
+                  {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
