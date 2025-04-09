@@ -30,7 +30,7 @@ class AddSkill(forms.ModelForm):
 
     def save(self, commit=True):
         instance = super().save(commit=False)
-        instance.slug = slugify(instance.name)  # Генерация slug
+        instance.slug = slugify(instance.name)
         if commit:
             instance.save()
         return instance

@@ -35,7 +35,7 @@ class MainPage(DefaultImageMixin, ListView):
             if skill_slug:
                 posts = posts.filter(wanted_skill__slug__exact=skill_slug)
             return posts
-        posts = PostModel.objects.exclude(author=user)
+        posts = PostModel.objects.exclude(author=user).exclude(responder=user)
         current_user_skills = UserSkills.objects.filter(user=user).values_list('skill', flat=True)
         posts = posts.filter(wanted_skill__in=current_user_skills)
         if skill_slug:
@@ -164,6 +164,7 @@ def start_chat(request, request_id):
             chat.participants.add(current_user, sender)
         chat_id = chat.id
         chat.save()
+        exchange.delete()
         return redirect(reverse_lazy('chats:chat_room', args=[chat_id]))
 
     return JsonResponse({'success': False})
@@ -195,7 +196,7 @@ def create_request(request, post_id):
             post = get_object_or_404(PostModel, id=post_id)
             sender = post.author
             sender_skill = post.offered_skill
-            receiver_skill = UserSkills.objects.get(skill=post.wanted_skill)
+            receiver_skill = UserSkills.objects.get(user=receiver, skill=post.wanted_skill)
             if ExChangeRequestModel.objects.filter(sender=sender, receiver=receiver, sender_skill=sender_skill,
                                                    receiver_skill=receiver_skill).exists():
                 return JsonResponse({'success': False, 'error': 'Запрос уже существует'})
@@ -207,6 +208,7 @@ def create_request(request, post_id):
                 receiver_skill=receiver_skill,
                 status=ExChangeRequestModel.ExchangeStatus.PENDING
             )
+            post.responder.add(receiver)
             return JsonResponse({'success': True})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})

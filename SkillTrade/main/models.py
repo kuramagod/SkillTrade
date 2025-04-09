@@ -107,6 +107,8 @@ class PostModel(models.Model):
                              null=True,
                              related_name="Запрашивает")
     created_at = models.DateTimeField(auto_now_add=True)
+    responder = models.ManyToManyField(get_user_model(), null=True,
+                                       related_name="responder")
 
     def __str__(self):
         return f"{self.author.username}[{self.offered_skill.skill}] to {self.wanted_skill.name}"
