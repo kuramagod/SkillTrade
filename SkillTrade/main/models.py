@@ -57,6 +57,7 @@ class ExChangeRequestModel(models.Model):
         PENDING = 'Ожидание'
         ACCEPTED = 'Принято'
         DECLINED = 'Отклонено'
+        ACTIVE = 'Активно'
         COMPLETED = 'Завершено'
 
     sender = models.ForeignKey(get_user_model(),

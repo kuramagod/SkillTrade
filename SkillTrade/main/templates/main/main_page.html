@@ -24,13 +24,8 @@ MainPage
             {% for post in posts %}
             <article class="post">
                 <div class="user-info">
-                    {% if post.author.avatar %}
-                    <img src="{{ post.author.avatar.url }}" alt="Аватар">
+                    <img src="{{ post.author.avatar.url|default:default_image }}" alt="Аватар">
                     <p class="username">{{ post.author.username }}</p>
-                    {% else %}
-                    <img src="{{ default_image }}" alt="Аватар">
-                    <p class="username">{{ post.author.username }}</p>
-                    {% endif %}
                 </div>
                 <div class="post-content">
                     <p>Предлогает: {{ post.offered_skill.skill }}. Запрашивает: {{ post.wanted_skill.name }}</p>

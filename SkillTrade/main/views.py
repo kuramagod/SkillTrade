@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
-from django.views.generic import TemplateView, DetailView, ListView, CreateView, DeleteView
+from django.views.generic import DetailView, ListView, CreateView, DeleteView
 
 
 from .forms import CreationRequestForm, AddSkillProfileForm, AddSkill, AddPostForm
@@ -152,7 +152,8 @@ def start_chat(request, request_id):
         exchange = get_object_or_404(ExChangeRequestModel, id=request_id)
         sender = exchange.sender
         receiver = exchange.receiver
-        if Chat.objects.filter(participants=current_user).filter(participants=sender).exists():
+        check_name = f"Чат {exchange.sender_skill} - {exchange.receiver_skill}" # название чата которое дается при создании, для проверки
+        if Chat.objects.filter(participants=current_user).filter(participants=sender).filter(name=check_name).exists():
             chat_id = Chat.objects.filter(participants=current_user).filter(participants=sender).values()[0]['id']
             return redirect(reverse_lazy('chats:chat_room', args=[chat_id]))
 
@@ -164,16 +165,21 @@ def start_chat(request, request_id):
             chat.participants.add(current_user, sender)
         chat_id = chat.id
         chat.save()
-        exchange.delete()
+        exchange.status = 'Активно'
+        exchange.save()
         return redirect(reverse_lazy('chats:chat_room', args=[chat_id]))
 
     return JsonResponse({'success': False})
 
 
-def show_chats(request):
-    current_user = request.user
-    chats = Chat.objects.filter(participants=current_user)
-    return render(request, 'main/chats.html', {'chats': chats})
+class ShowChats(DefaultImageMixin, ListView):
+    model = Chat
+    template_name = 'main/chats.html'
+    context_object_name = 'chats'
+
+    def get_queryset(self):
+        current_user = self.request.user
+        return Chat.objects.filter(participants=current_user)
 
 
 @csrf_protect

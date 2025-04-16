@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
@@ -9,7 +10,7 @@ from .models import Chat, Message
 def chat_room(request, chat_id):
     chat = get_object_or_404(Chat, id=chat_id)
     messages = chat.messages.order_by('timestamp')
-    return render(request, 'chat/chat_room.html', {'chat':chat, 'messages':messages})
+    return render(request, 'chat/chat_room.html', {'chat':chat, 'messages':messages, 'default_image': settings.DEFAULT_USER_IMAGE})
 
 @login_required
 def send_message(request, chat_id):

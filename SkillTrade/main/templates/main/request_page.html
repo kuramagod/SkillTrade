@@ -15,7 +15,7 @@ Profile
         <div class="profile-posts">
             <h3>Входящие запросы</h3>
             {% for request in requests %}
-            {% if request.sender == user and request.status != 'Отклонено' %}
+            {% if request.sender == user and request.status != 'Активно' %}
             <div class="post">
                 <div class="post-content">
                     <p>{{ request.receiver.username }} откликнулся на ваше предложение ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
@@ -35,10 +35,10 @@ Profile
             {% endif %}
             {% endfor %}
         </div>
-        {% for request in requests %}
-        {% if request.sender != user %}
         <div class="profile-posts">
             <h3>Отправленые запросы</h3>
+            {% for request in requests %}
+            {% if request.sender != user and request.status != 'Активно' %}
             <div class="post">
                 <div class="post-content">
                     <p>к {{ request.sender.username }}, на предложение ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }}) </p>
@@ -54,37 +54,106 @@ Profile
                     {% endif %}
                 </div>
             </div>
+            {% endif %}
+            {% endfor %}
         </div>
-        {% endif %}
-        {% endfor %}
+        <div class="profile-posts">
+            <h3>Активные запросы</h3>
+            {% for request in requests %}
+            {% if request.status == 'Активно' %}
+            <div class="post">
+                <div class="post-content">
+                    {% if user == request.sender %}
+                    <p> Активный обмен c {{ request.receiver.username }} ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }})</p>
+                    {% else %}
+                    <p> Активный обмен c {{ request.sender.username }} ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
+                    {% endif %}
+                    <button class="confirm-button" id="openModalBtn">Завершить
+                    </button>
+                </div>
+            </div>
+            <div id="myModal" class="modal">
+              <div class="modal-content">
+                <h2>Вы хотите завершить обмен?</h2>
+                <button class="end-button" data-id="{{ request.id }}" data-token="{{ csrf_token }}">Принять</button>
+                <button id="cancelBtn">Отмена</button>
+              </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div class="profile-posts">
+            <h3>Завершенные запросы</h3>
+            {% for request in requests %}
+            {% if request.status == 'Завершено' %}
+            <div class="post">
+                <div class="post-content">
+                    {% if user == request.sender %}
+                    <p> Завершенный обмен с {{ request.receiver.username }} ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }})</p>
+                    {% else %}
+                    <p> Завершенный обмен с {{ request.sender.username }} ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
+                    {% endif %}
+                    <button class="review-button">Отзыв
+                    </button>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
     </div>
 </main>
 {% endblock %}
 {% block extra_js %}
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".accept-button, .cancel-button").forEach(button => {
-            button.addEventListener("click", function () {
-                let requestId = this.getAttribute("data-id");
-                let csrfToken = this.getAttribute("data-token");
-                let status = this.classList.contains("accept-button") ? "Принято" : "Отклонено";
+    document.querySelectorAll(".accept-button, .cancel-button, .end-button").forEach(button => {
+        button.addEventListener("click", function () {
+            let requestId = this.getAttribute("data-id");
+            let csrfToken = this.getAttribute("data-token");
 
-                fetch("/update_status/", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": csrfToken,
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body: new URLSearchParams({
-                        request_id: requestId,
-                        status: status
-                    })
+            let status = ""; // Отбираем нужное действие по нажатии кнопки
+            if (this.classList.contains("accept-button")) {
+                status = "Принято";
+            } else if (this.classList.contains("cancel-button")) {
+                status = "Отклонено";
+            } else if (this.classList.contains("end-button")) {
+                status = "Завершено";
+            }
+
+            fetch("/update_status/", { // Отправляем запрос по адресу /update_status/ с методом POST
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "Content-Type": "application/x-www-form-urlencoded" // Формат данных, в котором мы отправляем тело запроса
+                },
+                body: new URLSearchParams({
+                    request_id: requestId, // ID обмена
+                    status: status // Обновляемый статус
                 })
-                .then(() => {
-                    location.reload();  // Перезагрузка страницы после успешного запроса
-                });
+            })
+            .then(() => {
+                location.reload(); // Перезагрузка страницы
             });
         });
+    });
+
+    const modal = document.getElementById("myModal");
+    const btn = document.getElementById("openModalBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+
+    cancelBtn.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
     });
 </script>
 {% endblock %}

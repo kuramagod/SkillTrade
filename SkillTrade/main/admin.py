@@ -3,7 +3,6 @@ from django.contrib import admin
 from .models import PostModel, ExChangeRequestModel, SkillsModel, UserSkills, ReviewModel
 
 admin.site.register(PostModel)
-admin.site.register(ExChangeRequestModel)
 admin.site.register(UserSkills)
 admin.site.register(ReviewModel)
 
@@ -13,3 +12,14 @@ class SkillsAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ('name', )}
     list_display_links = ('id', 'name')
     ordering = ['id']
+
+@admin.register(ExChangeRequestModel)
+class ExChangeRequestAdmin(admin.ModelAdmin):
+    list_display = ('str_repr', 'status')
+    list_display_links = ('str_repr', 'status')
+    ordering = ['created_at']
+
+    def str_repr(self, obj):
+        return str(obj)
+
+    str_repr.short_description = 'name'

@@ -1,8 +1,8 @@
 import json
 
 from channels.db import database_sync_to_async
-from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
-from django.contrib.auth.models import User
+from channels.generic.websocket import AsyncWebsocketConsumer
+from django.conf import settings
 from .models import Chat, Message
 
 
@@ -38,14 +38,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
             {
                 'type': 'chat_message',
                 'message': message,
-                'username': user.username
+                'username': user.username,
+                'avatar_url': user.avatar.url if user.avatar else settings.DEFAULT_USER_IMAGE
             }
         )
 
     async def chat_message(self, event):
+        # Отправляем сообщение в WebSocket
         await self.send(text_data=json.dumps({
             'message': event['message'],
-            'username': event['username']
+            'username': event['username'],
+            'avatar_url': event['avatar_url'],
         }))
 
     @database_sync_to_async
