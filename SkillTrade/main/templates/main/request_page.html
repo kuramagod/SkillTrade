@@ -15,7 +15,7 @@ Profile
         <div class="profile-posts">
             <h3>Входящие запросы</h3>
             {% for request in requests %}
-            {% if request.sender == user and request.status != 'Активно' %}
+            {% if request.sender == user and request.status != 'Активно' and request.status != 'Завершено' %}
             <div class="post">
                 <div class="post-content">
                     <p>{{ request.receiver.username }} откликнулся на ваше предложение ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
@@ -38,7 +38,7 @@ Profile
         <div class="profile-posts">
             <h3>Отправленые запросы</h3>
             {% for request in requests %}
-            {% if request.sender != user and request.status != 'Активно' %}
+            {% if request.sender != user and request.status != 'Активно' and request.status != 'Завершено' %}
             <div class="post">
                 <div class="post-content">
                     <p>к {{ request.sender.username }}, на предложение ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }}) </p>
@@ -93,7 +93,7 @@ Profile
                     {% else %}
                     <p> Завершенный обмен с {{ request.sender.username }} ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
                     {% endif %}
-                    <button class="review-button">Отзыв
+                    <button class="review-button" >Отзыв
                     </button>
                 </div>
             </div>
