@@ -16,7 +16,13 @@ MainPage
             <h3>Навыки</h3>
             <ul>
                 {% for skill in skills %}
-                <li><a href="{{ skill.get_absolute_url }}">{{ skill.name }}</a></li>
+                <li>
+                    <label>
+                        <input type="radio" name="skill" value="{{ skill.slug }}" class="skill-radio"
+                            {% if request.GET.skill == skill.slug %}checked{% endif %}>
+                        <span>{{ skill.name }}</span>
+                    </label>
+                </li>
                 {% endfor %}
             </ul>
         </aside>
@@ -83,6 +89,13 @@ MainPage
                     console.error('Ошибка:', error);
                 });
             });
+        });
+    });
+    document.querySelectorAll('.skill-radio').forEach(radio => {
+        radio.addEventListener('change', function () {
+            const params = new URLSearchParams(window.location.search);
+            params.set('skill', this.value);
+            window.location.search = params.toString();
         });
     });
 

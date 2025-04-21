@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Avg
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
@@ -8,7 +9,7 @@ from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, ListView, CreateView, DeleteView
 
 
-from .forms import CreationRequestForm, AddSkillProfileForm, AddSkill, AddPostForm
+from .forms import CreationRequestForm, AddSkillProfileForm, AddSkill, AddPostForm, AddReviewForm
 from .models import PostModel, ExChangeRequestModel, UserSkills, ReviewModel, SkillsModel
 from chat.models import Chat
 
@@ -28,18 +29,18 @@ class MainPage(DefaultImageMixin, ListView):
         return context
 
     def get_queryset(self):
-        skill_slug = self.kwargs.get('skill_slug')
+        skill_slug = self.request.GET.get('skill')
         user = self.request.user
         if not user.is_authenticated:
             posts = PostModel.objects.all()
             if skill_slug:
-                posts = posts.filter(wanted_skill__slug__exact=skill_slug)
+                posts = posts.filter(wanted_skill__slug=skill_slug)
             return posts
         posts = PostModel.objects.exclude(author=user).exclude(responder=user)
         current_user_skills = UserSkills.objects.filter(user=user).values_list('skill', flat=True)
         posts = posts.filter(wanted_skill__in=current_user_skills)
         if skill_slug:
-            posts = posts.filter(wanted_skill__slug__exact=skill_slug)
+            posts = posts.filter(wanted_skill__slug=skill_slug)
         return posts
 
 
@@ -63,7 +64,7 @@ class ProfilePage(LoginRequiredMixin, DefaultImageMixin, DetailView):
         username = self.kwargs.get('username')
         user = get_user_model().objects.get(username=username)
         context['author'] = user
-        context['review'] = self.get_queryset()
+        context['reviews'] = ReviewModel.objects.filter(target_user=user)
         return context
 
 
@@ -75,7 +76,8 @@ class RequestPage(LoginRequiredMixin, DefaultImageMixin, DetailView):
     def get_object(self):
         username = self.kwargs.get('username')
         user = get_user_model().objects.get(username=username)
-        return ExChangeRequestModel.objects.filter(sender=user) | ExChangeRequestModel.objects.filter(receiver=user)
+        exchanges = ExChangeRequestModel.objects.exclude(reviewed_user=user)
+        return exchanges.filter(sender=user) | exchanges.filter(receiver=user)
 
 
 class AddSkillProfile(DefaultImageMixin, CreateView):
@@ -120,6 +122,28 @@ class AddPost(DefaultImageMixin, CreateView):
         form.instance.author = user
         form.instance.offered_skill = offered_skill
         form.instance.wanted_skill = wanted_skill
+        return super().form_valid(form)
+
+
+class AddReview(DefaultImageMixin, CreateView):
+    form_class = AddReviewForm
+    template_name = 'main/add_review.html'
+    success_url = reverse_lazy('main_page')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        current_user = self.request.user
+        exchange = get_object_or_404(ExChangeRequestModel, id=self.kwargs.get('exchange_id'))
+        context['target_user'] = exchange.sender if current_user == exchange.receiver else exchange.receiver # Сократить по принципу DRY.
+        return context
+
+    def form_valid(self, form):
+        exchange = get_object_or_404(ExChangeRequestModel, id=self.kwargs.get('exchange_id'))
+        current_user = self.request.user
+        form.instance.author = current_user
+        form.instance.target_user = exchange.sender if current_user == exchange.receiver else exchange.receiver
+        form.instance.exchange = exchange
+        exchange.reviewed_user.add(current_user)
         return super().form_valid(form)
 
 

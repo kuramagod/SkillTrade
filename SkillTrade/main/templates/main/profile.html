@@ -24,9 +24,9 @@ Profile
                 <div class="profile-info">
                     <h2>{{ author.first_name }} {{ author.last_name }}</h2>
                     {% if author.location %}
-                    <p class="age">Возраст: {{ author.age }}<br>Город: {{ author.location }}</p>
+                    <p class="age">Возраст: {{ author.age }}<br>Город: {{ author.location }}<br>Рейтинг: {{ author.rating }}</p>
                     {% else %}
-                    <p class="age">Возраст: {{ author.age }}</p>
+                    <p class="age">Возраст: {{ author.age }}<br>Рейтинг: {{ author.rating }}</p>
                     {% endif %}
                     {% if author.description %}
                     <p class="description">{{ author.description }}</p>
@@ -39,7 +39,7 @@ Profile
                 <img src="{{ author.avatar.url }}" alt="Аватар" class="profile-avatar">
                 <div class="profile-info">
                     <h2>{{ author.first_name }} {{ author.last_name }}</h2>
-                    <p class="age">Возраст: {{ author.age }}<br>Расположение: {{ author.location }}</p>
+                    <p class="age">Возраст: {{ author.age }} {% if author.location %} <br>Расположение: {{ author.location }} {% endif %} <br> Рейтинг: {{ author.rating }}</p>
                     <p class="description">{{ author.description }}</p>
                 </div>
             </div>
@@ -62,32 +62,22 @@ Profile
                  </ul>
             </div>
 
-            <!-- Блок отзывов -->
-<!--            <div class="profile-posts">-->
-<!--                <h3>Посты</h3>-->
-
-<!--                <div class="post">-->
-<!--                    <div class="user-info">-->
-<!--                        <img src="media/ром.jpg" alt="Аватар">-->
-<!--                        <p class="username">Рома</p>-->
-<!--                    </div>-->
-<!--                    <div class="post-content">-->
-<!--                        <p>Научу Питоне взамен на C#</p>-->
-<!--                        <button class="read-more">Кинуть заявку</button>-->
-<!--                    </div>-->
-<!--                </div>-->
-
-<!--                <div class="post">-->
-<!--                    <div class="user-info">-->
-<!--                        <img src="media/ром.jpg" alt="Аватар">-->
-<!--                        <p class="username">Рома</p>-->
-<!--                    </div>-->
-<!--                    <div class="post-content">-->
-<!--                        <p>Научу игре на Pudg взамен на игре на Slark</p>-->
-<!--                        <button class="read-more">Кинуть заявку</button>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
+            <!-- Блок отзывов-->
+            <div class="profile-posts">
+                <h3>Отзывы о пользователе</h3>
+                {% for review in reviews %}
+                <div class="post">
+                    <div class="user-info">
+                        <img src="{{ review.author.avatar.url }}" alt="Аватар">
+                        <p class="username">{{ review.author.username }}</p>
+                    </div>
+                    <div class="post-content">
+                        <p>{{ review.comment }}</p>
+                        <p>Оценка {{ review.rating }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
     </main>
 {% endblock %}

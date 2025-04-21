@@ -1,8 +1,8 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 import datetime
-
 
 
 class User(AbstractUser):
@@ -13,14 +13,7 @@ class User(AbstractUser):
     birth_date = models.DateField(verbose_name="Дата рождения", null=True, blank=True, default=datetime.date.today)
     age = models.IntegerField(verbose_name='Возраст', null=True, blank=True)
 
-    def get_average_rating(self):
-        reviews = self.target.all()
-        if reviews.exists():
-            return sum(r.rating for r in reviews) / reviews.count()
-        return 0.0
-
     def save(self, *args, **kwargs):
         today = datetime.date.today()
         self.age = today.year - self.birth_date.year - ((today.month, today.day) < (self.birth_date.month, self.birth_date.day))
         super().save(*args, **kwargs)
-

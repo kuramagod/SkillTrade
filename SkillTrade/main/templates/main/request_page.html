@@ -93,7 +93,7 @@ Profile
                     {% else %}
                     <p> Завершенный обмен с {{ request.sender.username }} ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
                     {% endif %}
-                    <button class="review-button" >Отзыв
+                    <button class="review-button" onclick="window.location.href='{% url 'add_review' request.id %}'">Оставить отзыв
                     </button>
                 </div>
             </div>

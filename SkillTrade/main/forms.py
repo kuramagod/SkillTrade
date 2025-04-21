@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import user_logged_in, get_user, get_user_model
 from slugify import slugify
-from .models import ExChangeRequestModel, UserSkills, SkillsModel, PostModel
+from .models import ExChangeRequestModel, UserSkills, SkillsModel, PostModel, ReviewModel
 
 
 class CreationRequestForm(forms.ModelForm):
@@ -48,3 +48,13 @@ class AddPostForm(forms.ModelForm):
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['offered_skill'].queryset = UserSkills.objects.filter(user=user)
+
+
+class AddReviewForm(forms.ModelForm):
+    class Meta:
+        model = ReviewModel
+        fields = ['comment', 'rating']
+        labels = {
+            'comment': 'Комментарий',
+            'rating': 'Оценка'
+        }

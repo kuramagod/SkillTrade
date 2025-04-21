@@ -15,8 +15,8 @@ class SkillsAdmin(admin.ModelAdmin):
 
 @admin.register(ExChangeRequestModel)
 class ExChangeRequestAdmin(admin.ModelAdmin):
-    list_display = ('str_repr', 'status')
-    list_display_links = ('str_repr', 'status')
+    list_display = ('id', 'str_repr', 'status')
+    list_display_links = ('id', 'str_repr', 'status')
     ordering = ['created_at']
 
     def str_repr(self, obj):

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.db.models import Avg
 from django.urls import reverse
 from slugify import slugify
 
@@ -82,6 +83,9 @@ class ExChangeRequestModel(models.Model):
                               choices=ExchangeStatus.choices,
                               default=ExchangeStatus.PENDING)
     created_at = models.DateTimeField(auto_now_add=True)
+    reviewed_user = models.ManyToManyField(get_user_model(), null=True,
+                                       related_name="reviewed_user")
+
 
     def __str__(self):
         return f"{self.sender.username}[{self.sender_skill.skill}] to {self.receiver.username}[{self.receiver_skill.skill}]"
@@ -137,10 +141,16 @@ class ReviewModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.author
+        return f"Отзыв к {self.exchange.sender_skill}|{self.exchange.receiver_skill} от {self.author.username}"
 
     class Meta:
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
         ordering = ['author']
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        avg_rating = ReviewModel.objects.filter(target_user=self.target_user).aggregate(Avg('rating'))['rating__avg']
+        self.target_user.rating = round(avg_rating, 1) if avg_rating is not None else 0.0
+        self.target_user.save()
