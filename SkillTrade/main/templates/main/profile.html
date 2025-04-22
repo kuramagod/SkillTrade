@@ -23,14 +23,14 @@ Profile
                 {% endif %}
                 <div class="profile-info">
                     <h2>{{ author.first_name }} {{ author.last_name }}</h2>
-                    {% if author.location %}
-                    <p class="age">Возраст: {{ author.age }}<br>Город: {{ author.location }}<br>Рейтинг: {{ author.rating }}</p>
-                    {% else %}
-                    <p class="age">Возраст: {{ author.age }}<br>Рейтинг: {{ author.rating }}</p>
-                    {% endif %}
+                    <p class="age">
+                        Возраст: {{ author.age }}
+                        {% if author.gender != 'N' %}<br>Пол: {{ author.gender }} {% endif %}
+                        {% if author.location %}<br>Город: {{ author.location }}{% endif %}
+                        {% if author.rating != 0 %}<br>Рейтинг: {{ author.rating }}{% endif %}
+                    </p>
                     {% if author.description %}
                     <p class="description">{{ author.description }}</p>
-                    {% else %}
                     {% endif %}
                 </div>
             </div>
@@ -39,7 +39,12 @@ Profile
                 <img src="{{ author.avatar.url }}" alt="Аватар" class="profile-avatar">
                 <div class="profile-info">
                     <h2>{{ author.first_name }} {{ author.last_name }}</h2>
-                    <p class="age">Возраст: {{ author.age }} {% if author.location %} <br>Расположение: {{ author.location }} {% endif %} <br> Рейтинг: {{ author.rating }}</p>
+                    <p class="age">
+                        Возраст: {{ author.age }}
+                        {% if author.gender != 'N' %}<br>Пол: {{ author.gender }} {% endif %}
+                        {% if author.location %}<br>Город: {{ author.location }}{% endif %}
+                        {% if author.rating != 0 %}<br>Рейтинг: {{ author.rating }}{% endif %}
+                    </p>
                     <p class="description">{{ author.description }}</p>
                 </div>
             </div>

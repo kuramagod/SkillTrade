@@ -40,7 +40,7 @@ class RegisterUserForm(UserCreationForm):
 
     class Meta:
         model = get_user_model()
-        fields = ['username', 'email', 'first_name', 'last_name', 'birth_date', 'password1', 'password2']
+        fields = ['username', 'email', 'gender', 'first_name', 'last_name', 'birth_date', 'password1', 'password2']
         labels = {
             'email': 'E-mail',
             'first_name': 'Имя',
@@ -61,7 +61,7 @@ class ProfileUserForm(forms.ModelForm):
 
     class Meta:
         model = get_user_model()
-        fields = ['username', 'email', 'first_name', 'last_name', 'description', 'location', 'birth_date', 'avatar']
+        fields = ['username', 'email', 'gender', 'first_name', 'last_name', 'description', 'location', 'birth_date', 'avatar']
         labels = {
             'first_name': 'Имя',
             'last_name': 'Фамилия',
