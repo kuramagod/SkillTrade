@@ -15,98 +15,101 @@ Profile
         <!-- Блок входящих запросов -->
         <div class="profile-posts">
             <h3>Входящие запросы</h3>
-            {% for request in requests %}
-            {% if request.sender == user and request.status != 'Активно' and request.status != 'Завершено' %}
-            <div class="post">
-                <div class="post-content">
-                    <p>{{ request.receiver.username }} откликнулся на ваше предложение ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
-                    {% if request.status == 'Ожидание' %}
-                    <button class="accept-button" data-id="{{ request.id }}" data-token="{{ csrf_token }}">Принять
-                    </button>
-                    <button class="cancel-button" data-id="{{ request.id }}" data-token="{{ csrf_token }}">Отклонить
-                    </button>
-                    {% elif request.status == 'Принято' %}
-                    <form class="start_chat_form" method="post" action="{% url 'start_chat' request.id %}">
-                        {% csrf_token %}
-                        <button class="read-more start_chat_form-btn" type="submit">Начать чат</button>
-                    </form>
-                    {% endif %}
+            {% for request in incoming_requests %}
+                <div class="post">
+                    <div class="post-content">
+                        <p>{{ request.receiver.username }} откликнулся на ваше предложение ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
+                        {% if request.status == 'Ожидание' %}
+                            <button class="accept-button" data-id="{{ request.id }}" data-token="{{ csrf_token }}">
+                                Принять
+                            </button>
+                            <button class="cancel-button" data-id="{{ request.id }}" data-token="{{ csrf_token }}">
+                                Отклонить
+                            </button>
+                        {% elif request.status == 'Принято' %}
+                            <form class="start_chat_form" method="post" action="{% url 'start_chat' request.id %}">
+                                {% csrf_token %}
+                                <button class="read-more start_chat_form-btn" type="submit">Начать чат</button>
+                            </form>
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
-            {% endif %}
             {% endfor %}
         </div>
         <!-- Блок отправленых запросов -->
         <div class="profile-posts">
-            <h3>Отправленые запросы</h3>
-            {% for request in requests %}
-            {% if request.sender != user and request.status != 'Активно' and request.status != 'Завершено' %}
-            <div class="post">
-                <div class="post-content">
-                    <p>к {{ request.sender.username }}, на предложение ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }}) </p>
-                    {% if request.status == 'Ожидание' %}
-                    <p>Стасус: <b>{{ request.status }}</b></p>
-                    {% elif request.status == 'Отклонено' %}
-                    <p>Стасус: <b>{{ request.status }}</b></p>
-                    {% elif request.status == 'Принято' %}
-                    <form class="start_chat_form" method="post" action="{% url 'start_chat' request.id %}">
-                        {% csrf_token %}
-                        <button class="read-more start_chat_form-btn" type="submit">Начать чат</button>
-                    </form>
-                    {% endif %}
+            <h3>Отправленные запросы</h3>
+            {% for request in sent_requests %}
+                <div class="post">
+                    <div class="post-content">
+                        <p>к {{ request.sender.username }}, на предложение ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }}) </p>
+                        {% if request.status == 'Ожидание' %}
+                            <p>Стасус: <b>{{ request.status }}</b></p>
+                        {% elif request.status == 'Отклонено' %}
+                            <p>Стасус: <b>{{ request.status }}</b></p>
+                        {% elif request.status == 'Принято' %}
+                            <form class="start_chat_form" method="post" action="{% url 'start_chat' request.id %}">
+                                {% csrf_token %}
+                                <button class="read-more start_chat_form-btn" type="submit">
+                                    Начать чат
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
-            {% endif %}
             {% endfor %}
         </div>
         <!-- Блок активные запросы -->
         <div class="profile-posts">
             <h3>Активные запросы</h3>
-            {% for request in requests %}
-            {% if request.status == 'Активно' %}
-            <div class="post">
-                <div class="post-content">
-                    {% if user == request.sender %}
-                    <p> Активный обмен c {{ request.receiver.username }} ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }})</p>
-                    {% else %}
-                    <p> Активный обмен c {{ request.sender.username }} ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
-                    {% endif %}
-                    <button class="confirm-button" id="openModalBtn">Завершить
-                    </button>
+            {% for request in active_requests %}
+                <div class="post">
+                    <div class="post-content">
+                        {% if user == request.sender %}
+                            <p> Активный обмен c {{ request.receiver.username }} ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }})</p>
+                        {% else %}
+                          <p> Активный обмен c {{ request.sender.username }} ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
+                        {% endif %}
+                        <button class="confirm-button" id="openModalBtn">
+                            Завершить
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <div id="myModal" class="modal">
-              <div class="modal-content">
-                <h2>Вы хотите завершить обмен?</h2>
-                <button class="end-button" data-id="{{ request.id }}" data-token="{{ csrf_token }}">Принять</button>
-                <button id="cancelBtn">Отмена</button>
-              </div>
-            </div>
-            {% endif %}
+                <div id="myModal" class="modal">
+                  <div class="modal-content">
+                    <h2>Вы хотите завершить обмен?</h2>
+                    <button class="end-button" data-id="{{ request.id }}" data-token="{{ csrf_token }}">
+                        Принять
+                    </button>
+                    <button id="cancelBtn">
+                        Отмена
+                    </button>
+                  </div>
+                </div>
             {% endfor %}
         </div>
          <!-- Блок завершенные запросы -->
         <div class="profile-posts">
             <h3>Завершенные запросы</h3>
-            {% for request in requests %}
-            {% if request.status == 'Завершено' %}
-            <div class="post">
-                <div class="post-content">
-                    {% if user == request.sender %}
-                    <p> Завершенный обмен с {{ request.receiver.username }} ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }})</p>
-                    {% else %}
-                    <p> Завершенный обмен с {{ request.sender.username }} ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
-                    {% endif %}
-                    <button class="review-button" onclick="window.location.href='{% url 'add_review' request.id %}'">Оставить отзыв
-                    </button>
+            {% for request in completed_requests %}
+                <div class="post">
+                    <div class="post-content">
+                        {% if user == request.sender %}
+                            <p> Завершенный обмен с {{ request.receiver.username }} ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }})</p>
+                        {% else %}
+                            <p> Завершенный обмен с {{ request.sender.username }} ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
+                        {% endif %}
+                        <button class="review-button" onclick="window.location.href='{% url 'add_review' request.id %}'">
+                            Оставить отзыв
+                        </button>
+                    </div>
                 </div>
-            </div>
-            {% endif %}
             {% endfor %}
         </div>
     </div>
 </main>
 {% endblock %}
+
 {% block extra_js %}
 <script>
     document.addEventListener("DOMContentLoaded", function () {

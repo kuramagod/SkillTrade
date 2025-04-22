@@ -68,22 +68,27 @@ class ProfilePage(LoginRequiredMixin, DefaultImageMixin, DetailView):
         return context
 
 
-class RequestPage(LoginRequiredMixin, DefaultImageMixin, DetailView):
+class RequestPage(LoginRequiredMixin, DefaultImageMixin, ListView):
     model = ExChangeRequestModel
     template_name = 'main/request_page.html'
     context_object_name = 'requests'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        username = self.kwargs.get('username')
+        user = get_user_model().objects.get(username=username)
+        exchanges = ExChangeRequestModel.objects.exclude(reviewed_user=user)
+        context['incoming_requests'] = exchanges.filter(sender=user).exclude(status__in=['Активно', 'Завершено', 'Отклонено'])
+        context['sent_requests'] = exchanges.filter(receiver=user).exclude(status__in=['Активно', 'Завершено', 'Отклонено'])
+        context['active_requests'] = exchanges.filter(status='Активно')
+        context['completed_requests'] = exchanges.filter(status='Завершено')
+        return context
 
     def dispatch(self, request, *args, **kwargs): # Перехватывает HTTP-запрос, проверяя является ли пользователь владельцем страницы, иначе пересылает на главную.
         username = kwargs.get('username')
         if request.user.username != username:
             return HttpResponseRedirect(reverse_lazy('main_page'))
         return super().dispatch(request, *args, **kwargs)
-
-    def get_object(self):
-        username = self.kwargs.get('username')
-        user = get_user_model().objects.get(username=username)
-        exchanges = ExChangeRequestModel.objects.exclude(reviewed_user=user)
-        return exchanges.filter(sender=user) | exchanges.filter(receiver=user)
 
 
 class AddSkillProfile(DefaultImageMixin, CreateView):

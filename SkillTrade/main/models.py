@@ -83,7 +83,7 @@ class ExChangeRequestModel(models.Model):
                               choices=ExchangeStatus.choices,
                               default=ExchangeStatus.PENDING)
     created_at = models.DateTimeField(auto_now_add=True)
-    reviewed_user = models.ManyToManyField(get_user_model(), related_name="reviewed_user")
+    reviewed_user = models.ManyToManyField(get_user_model(), related_name="reviewed_user", blank=True)
 
 
     def __str__(self):
@@ -111,7 +111,7 @@ class PostModel(models.Model):
                              null=True,
                              related_name="Запрашивает")
     created_at = models.DateTimeField(auto_now_add=True)
-    responder = models.ManyToManyField(get_user_model(), related_name="responder")
+    responder = models.ManyToManyField(get_user_model(), related_name="responder", blank=True)
 
     def __str__(self):
         return f"{self.author.username}[{self.offered_skill.skill}] to {self.wanted_skill.name}"
