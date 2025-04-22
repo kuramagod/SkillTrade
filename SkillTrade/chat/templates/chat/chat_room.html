@@ -14,30 +14,32 @@ Chat
   <div class="w-full max-w-2xl bg-white shadow-lg rounded-2xl overflow-hidden flex flex-col h-[80vh]">
     <!-- Заголовок -->
     <div class="bg-blue-600 text-white px-6 py-4 text-xl font-semibold">
-      Комната чата
+      {{ chat.name }}
     </div>
 
     <!-- Область сообщений -->
     <div id="chat-log" class="flex-1 overflow-y-auto px-6 py-4 space-y-4 text-sm">
       {% for message in messages %}
-        {% if message.sender == user %}
-          <!-- Моё сообщение (справа) -->
-          <div class="flex justify-end space-x-2" data-message-id="{{ message.id }}">
-            <div class="bg-blue-100 text-gray-800 px-4 py-2 rounded-xl max-w-[70%]">
-              <p class="text-sm font-medium">{{ message.content }}</p>
-            </div>
-            <img src="{{ user.avatar.url|default:default_image }}" class="w-8 h-8 rounded-full object-cover">
+      {% if message.sender == user %}
+        <!-- Моё сообщение (справа) -->
+        <div class="flex justify-end space-x-2" data-message-id="{{ message.id }}">
+          <div class="bg-blue-100 text-gray-800 px-4 py-2 rounded-xl max-w-[70%]">
+            <p class="text-sm font-medium">{{ message.content }}</p>
+            <p class="text-xs text-gray-500 text-right mt-1">{{ message.timestamp|date:"H:i" }}</p>
           </div>
-        {% else %}
-          <!-- Сообщение другого пользователя (слева) -->
-          <div class="flex justify-start space-x-2" data-message-id="{{ message.id }}">
-            <img src="{{ message.sender.avatar.url|default:default_image }}" class="w-8 h-8 rounded-full object-cover">
-            <div class="bg-gray-100 text-gray-800 px-4 py-2 rounded-xl max-w-[70%]">
-              <p class="text-sm font-medium">{{ message.content }}</p>
-            </div>
+          <img src="{{ user.avatar.url|default:default_image }}" class="w-8 h-8 rounded-full object-cover">
+        </div>
+      {% else %}
+        <!-- Сообщение другого пользователя (слева) -->
+        <div class="flex justify-start space-x-2" data-message-id="{{ message.id }}">
+          <img src="{{ message.sender.avatar.url|default:default_image }}" class="w-8 h-8 rounded-full object-cover">
+          <div class="bg-gray-100 text-gray-800 px-4 py-2 rounded-xl max-w-[70%]">
+            <p class="text-sm font-medium">{{ message.content }}</p>
+            <p class="text-xs text-gray-500 text-left mt-1">{{ message.timestamp|date:"H:i" }}</p>
           </div>
-        {% endif %}
-      {% endfor %}
+        </div>
+      {% endif %}
+    {% endfor %}
     </div>
 
     <!-- Ввод -->
@@ -75,23 +77,52 @@ Chat
           wrapper.classList.add('justify-start');
       }
 
+      const formattedMessage = data.message.replace(/\n/g, '<br>'); // Заменяем символы новой строки на <br>
+
       wrapper.innerHTML = isMine
           ? `
             <div class="bg-blue-100 text-gray-800 px-4 py-2 rounded-xl max-w-[70%]">
-              <p class="text-sm font-medium">${data.message}</p>
+              <p class="text-sm font-medium">${formattedMessage}</p>
+              <p class="text-xs text-gray-500 text-right mt-1">${data.timestamp}</p>
             </div>
             <img src="${data.avatar_url}" class="w-8 h-8 rounded-full object-cover">
           `
           : `
             <img src="${data.avatar_url}" class="w-8 h-8 rounded-full object-cover">
             <div class="bg-gray-100 text-gray-800 px-4 py-2 rounded-xl max-w-[70%]">
-              <p class="text-sm font-medium">${data.message}</p>
+              <p class="text-sm font-medium">${formattedMessage}</p>
+              <p class="text-xs text-gray-500 text-left mt-1">${data.timestamp}</p>
             </div>
           `;
 
       chatLog.appendChild(wrapper);
-      chatLog.scrollTop = chatLog.scrollHeight;
+      chatLog.scrollTop = chatLog.scrollHeight; // Прокручиваем вниз
   };
+
+  // Отправка сообщения по нажатию Enter (без Shift)
+  document.getElementById('message-content').addEventListener('keydown', function(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+          event.preventDefault(); // Отключаем стандартное поведение Enter (перенос строки в textarea)
+
+          const textarea = document.getElementById('message-content');
+          const messageContent = textarea.value.trim();
+
+          if (messageContent !== '') {
+              chatSocket.send(JSON.stringify({
+                  'message': messageContent
+              }));
+              textarea.value = ''; // Очистить поле ввода после отправки
+          }
+      }
+  });
+
+  // Поддержка новой строки на Shift+Enter
+  document.getElementById('message-content').addEventListener('keydown', function(event) {
+      if (event.key === 'Enter' && event.shiftKey) {
+          // Позволяем добавить новую строку (не предотвращаем действие)
+          return;
+      }
+  });
 
   document.getElementById('send-button').onclick = function() {
       const textarea = document.getElementById('message-content');
@@ -101,8 +132,14 @@ Chat
           chatSocket.send(JSON.stringify({
               'message': messageContent
           }));
-          textarea.value = '';
+          textarea.value = ''; // Очистить поле ввода
       }
+  };
+
+  // Прокручиваем чат вниз при загрузке страницы
+  window.onload = function() {
+      const chatLog = document.querySelector('#chat-log');
+      chatLog.scrollTop = chatLog.scrollHeight;
   };
 </script>
 {% endblock %}
