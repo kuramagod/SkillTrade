@@ -5,48 +5,46 @@
 <link rel="stylesheet" href="{% static 'main/css/base.css' %}">
 {% endblock %}
 
-
 {% block title %}
 Chats
 {% endblock %}
 
 {% block content %}
-<div class="flex justify-center px-4 mt-12">
-  <div class="w-full max-w-2xl bg-white shadow-lg rounded-2xl overflow-hidden">
-    <div class="bg-blue-600 text-white px-6 py-4 text-xl font-semibold">
+<div class="chat-container">
+  <div class="chat-card">
+    <div class="chat-header">
         Мои чаты
     </div>
-    <ul class="divide-y divide-gray-200">
+    <ul class="chat-list">
         {% for chat in chats %}
-        <a href="{% url 'chats:chat_room' chat.id %}" class="block hover:bg-gray-100 transition px-6 py-4 flex items-start space-x-4">
-            {% for part in chat.participants.all %}
-                {% if part != user %}
-                     {% if part.avatar %}
-                        <div class="flex-shrink-0">
-                            <img src="{{ part.avatar.url }}" alt="error" class="w-12 h-12 rounded-full object-cover">
-                        </div>
-                    {% else %}
-                        <div class="flex-shrink-0">
-                            <img src="{{ default_image }}" alt="error" class="w-12 h-12 rounded-full object-cover">
-                        </div>
-                    {% endif %}
-                    <div class="flex-1 min-w-0">
-                        <p class="text-lg font-medium text-gray-900">{{ part.first_name }} {{ part.last_name }}</p>
-                        <p class="text-sm text-gray-500 truncate">{% if not chat.messages.last.content %} {{ chat.name }} {% endif %} {{ chat.messages.last.content }} </p>
-                    </div>
-                    <div class="text-sm text-gray-400 whitespace-nowrap">
-                        {{ chat.messages.last.timestamp|date:"H:i" }}
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </a>
+        <li class="divider">
+            <a href="{% url 'chats:chat_room' chat.id %}" class="chat-item">
+                <div class="chat-item-content">
+                    {% for part in chat.participants.all %}
+                        {% if part != user %}
+                            {% if part.avatar %}
+                                <div class="chat-avatar">
+                                    <img src="{{ part.avatar.url }}" alt="Аватар пользователя">
+                                </div>
+                            {% else %}
+                                <div class="chat-avatar">
+                                    <img src="{{ default_image }}" alt="Аватар по умолчанию">
+                                </div>
+                            {% endif %}
+                            <div class="chat-info">
+                                <p class="chat-name">{{ part.first_name }} {{ part.last_name }}</p>
+                                <p class="chat-preview">{% if not chat.messages.last.content %} {{ chat.name }} {% endif %} {{ chat.messages.last.content }}</p>
+                            </div>
+                            <div class="chat-time">
+                                {{ chat.messages.last.timestamp|date:"H:i" }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </a>
+        </li>
         {% endfor %}
     </ul>
   </div>
 </div>
 {% endblock %}
-
-{% block extra_js %}
-<script src="https://cdn.tailwindcss.com"></script>
-{% endblock %}
-

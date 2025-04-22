@@ -24,18 +24,20 @@
                 <li>
                     <a href="{% url 'main_page' %}"
                        class="nav-link {% if request.resolver_match.url_name == 'main_page' or request.resolver_match.url_name == 'skill_category' %}px-2 text-secondary{% else %}px-2 text-white{% endif %}">
-                        SearchTrade
+                        Обмены
                     </a>
                 </li>
                 {% if user.is_authenticated %}
                 <li>
                     <a href="{% url 'request_page' user.username %}"
                        class="nav-link {% if request.resolver_match.url_name == 'request_page' %}px-2 text-secondary{% else %}px-2 text-white{% endif %}">
-                        Request
+                        Запросы
                     </a>
                 </li>
                 <li>
-                    <a href="{% url 'chats' %}" class="nav-link px-2 text-white">Chats</a>
+                    <a href="{% url 'chats' %}" class="nav-link {% if request.resolver_match.url_name == 'chats' %}px-2 text-secondary{% else %}px-2 text-white{% endif %}">
+                        Чаты
+                    </a>
                 </li>
                 {% endif %}
             </ul>
@@ -51,9 +53,9 @@
                     {% endif %}
                 </a>
                 <ul class="dropdown-menu text-small">
-                    <li><a class="dropdown-item" href="{% url 'add_exchange' %}">Create Post</a></li>
-                    <li><a class="dropdown-item" href="{% url 'users:profile_edit' user.username %}">Settings</a></li>
-                    <li><a class="dropdown-item" href="{% url 'profile_page' user.username %}">Profile</a></li>
+                    <li><a class="dropdown-item" href="{% url 'add_exchange' %}">Создать пост</a></li>
+                    <li><a class="dropdown-item" href="{% url 'users:profile_edit' user.username %}">Настройки профиля</a></li>
+                    <li><a class="dropdown-item" href="{% url 'profile_page' user.username %}">Профиль</a></li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
