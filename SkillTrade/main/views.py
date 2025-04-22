@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Avg
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_protect
@@ -73,6 +73,12 @@ class RequestPage(LoginRequiredMixin, DefaultImageMixin, DetailView):
     template_name = 'main/request_page.html'
     context_object_name = 'requests'
 
+    def dispatch(self, request, *args, **kwargs): # Перехватывает HTTP-запрос, проверяя является ли пользователь владельцем страницы, иначе пересылает на главную.
+        username = kwargs.get('username')
+        if request.user.username != username:
+            return HttpResponseRedirect(reverse_lazy('main_page'))
+        return super().dispatch(request, *args, **kwargs)
+
     def get_object(self):
         username = self.kwargs.get('username')
         user = get_user_model().objects.get(username=username)
@@ -130,18 +136,24 @@ class AddReview(DefaultImageMixin, CreateView):
     template_name = 'main/add_review.html'
     success_url = reverse_lazy('main_page')
 
+    def get_exchange(self):
+        return get_object_or_404(ExChangeRequestModel, id=self.kwargs.get('exchange_id'))
+
+    def get_target_user(self, exchange):
+        current_user = self.request.user
+        return exchange.sender if current_user == exchange.receiver else exchange.receiver
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        current_user = self.request.user
-        exchange = get_object_or_404(ExChangeRequestModel, id=self.kwargs.get('exchange_id'))
-        context['target_user'] = exchange.sender if current_user == exchange.receiver else exchange.receiver # Сократить по принципу DRY.
+        exchange = self.get_exchange()
+        context['target_user'] = self.get_target_user(exchange)
         return context
 
     def form_valid(self, form):
-        exchange = get_object_or_404(ExChangeRequestModel, id=self.kwargs.get('exchange_id'))
+        exchange = self.get_exchange()
         current_user = self.request.user
         form.instance.author = current_user
-        form.instance.target_user = exchange.sender if current_user == exchange.receiver else exchange.receiver
+        form.instance.target_user = self.get_target_user(exchange)
         form.instance.exchange = exchange
         exchange.reviewed_user.add(current_user)
         return super().form_valid(form)
