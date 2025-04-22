@@ -65,7 +65,7 @@ Profile
                     {% endif %}
                  </ul>
             </div>
-
+            {% if reviews %}
             <!-- Блок отзывов-->
             <div class="profile-posts">
                 <h3>Отзывы о пользователе</h3>
@@ -82,6 +82,7 @@ Profile
                 </div>
                 {% endfor %}
             </div>
+            {% endif %}
         </div>
     </main>
 {% endblock %}

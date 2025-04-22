@@ -32,7 +32,7 @@ Chats
                     {% endif %}
                     <div class="flex-1 min-w-0">
                         <p class="text-lg font-medium text-gray-900">{{ part.first_name }} {{ part.last_name }}</p>
-                        <p class="text-sm text-gray-500 truncate">{{ chat.messages.last.content }}</p>
+                        <p class="text-sm text-gray-500 truncate">{% if not chat.messages.last.content %} {{ chat.name }} {% endif %} {{ chat.messages.last.content }} </p>
                     </div>
                     <div class="text-sm text-gray-400 whitespace-nowrap">
                         {{ chat.messages.last.timestamp|date:"H:i" }}
