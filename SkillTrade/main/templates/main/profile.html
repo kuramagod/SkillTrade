@@ -51,14 +51,18 @@ Profile
                      <li>{{ skill.skill }}: {{ skill.level }}
                          <form action="{% url 'delete_skill' skill.id %}" method="post" style="display:inline;">
                         {% csrf_token %}
+                        {% if author.username == user.username %}
                         <button type="submit">удалить</button>
+                        {% endif %}
                          </form></li>
                      {% empty %}
                          <li>Нет навыков</li>
                      {% endfor %}
+                    {% if author.username == user.username %}
                     <a href="{% url 'add_skill_profile' %}">
                         <button type="button">Добавить навык</button>
                     </a>
+                    {% endif %}
                  </ul>
             </div>
 
