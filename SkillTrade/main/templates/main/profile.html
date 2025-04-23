@@ -13,9 +13,8 @@ Profile
 <main>
       <div class="profile-container">
             <!-- Блок профиля -->
-          {% if author.username == user.username %}
             <div class="profile-header">
-                <a href="{% url 'users:profile_edit' user.username %}" class="profile-link">
+                {% if author.username == user.username %} <a href="{% url 'users:profile_edit' user.username %}" class="profile-link"> {% endif %}
                 {% if user.avatar %}
                 <img src="{{ author.avatar.url }}" alt="Аватар" class="profile-avatar"></a>
                 {% else %}
@@ -25,30 +24,18 @@ Profile
                     <h2>{{ author.first_name }} {{ author.last_name }}</h2>
                     <p class="age">
                         Возраст: {{ author.age }}
-                        {% if author.gender != 'N' %}<br>Пол: {{ author.gender }} {% endif %}
+                        {% if author.gender != 'N' %}<br>Пол: {{ author.get_gender_display }} {% endif %}
                         {% if author.location %}<br>Город: {{ author.location }}{% endif %}
                         {% if author.rating != 0 %}<br>Рейтинг: {{ author.rating }}{% endif %}
                     </p>
                     {% if author.description %}
-                    <p class="description">{{ author.description }}</p>
+                    <p class="description">
+                        {{ author.description }}
+                    </p>
                     {% endif %}
                 </div>
             </div>
-          {% else %}
-          <div class="profile-header">
-                <img src="{{ author.avatar.url }}" alt="Аватар" class="profile-avatar">
-                <div class="profile-info">
-                    <h2>{{ author.first_name }} {{ author.last_name }}</h2>
-                    <p class="age">
-                        Возраст: {{ author.age }}
-                        {% if author.gender != 'N' %}<br>Пол: {{ author.gender }} {% endif %}
-                        {% if author.location %}<br>Город: {{ author.location }}{% endif %}
-                        {% if author.rating != 0 %}<br>Рейтинг: {{ author.rating }}{% endif %}
-                    </p>
-                    <p class="description">{{ author.description }}</p>
-                </div>
-            </div>
-          {% endif %}
+          <!-- Блок навыков-->
             <div class="user-skills">
                 <h3>Навыки</h3>
                 <ul>
