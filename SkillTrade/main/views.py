@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Avg
+from django.db.models import Avg, Q
+from django.dispatch import receiver
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
@@ -80,8 +81,8 @@ class RequestPage(LoginRequiredMixin, DefaultImageMixin, ListView):
         exchanges = ExChangeRequestModel.objects.exclude(reviewed_user=user)
         context['incoming_requests'] = exchanges.filter(sender=user).exclude(status__in=['Активно', 'Завершено', 'Отклонено'])
         context['sent_requests'] = exchanges.filter(receiver=user).exclude(status__in=['Активно', 'Завершено', 'Отклонено'])
-        context['active_requests'] = exchanges.filter(status='Активно')
-        context['completed_requests'] = exchanges.filter(status='Завершено')
+        context['active_requests'] = exchanges.filter(status='Активно').filter(Q(receiver=user) | Q(sender=user))
+        context['completed_requests'] = exchanges.filter(status='Завершено').filter(Q(receiver=user) | Q(sender=user))
         return context
 
     def dispatch(self, request, *args, **kwargs): # Перехватывает HTTP-запрос, проверяя является ли пользователь владельцем страницы, иначе пересылает на главную.
