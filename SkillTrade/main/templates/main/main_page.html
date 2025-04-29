@@ -15,7 +15,18 @@ MainPage
         <aside class="categories">
             <h3>Навыки</h3>
             <ul>
-                {% for skill in skills %}
+                <h4>Предлагаемые</h4>
+                {% for skill in offered_skills %}
+                <li>
+                    <label>
+                        <input type="radio" name="skill" value="{{ skill.slug }}" class="skill-radio"
+                            {% if request.GET.skill == skill.slug %}checked{% endif %}>
+                        <span>{{ skill.name }}</span>
+                    </label>
+                </li>
+                {% endfor %}
+                <h4>Запрашиваемые</h4>
+                {% for skill in wanted_skills %}
                 <li>
                     <label>
                         <input type="radio" name="skill" value="{{ skill.slug }}" class="skill-radio"

@@ -26,7 +26,8 @@ class MainPage(DefaultImageMixin, ListView):
         context = super().get_context_data(**kwargs)
         existing_offered_post_skills = PostModel.objects.values_list("offered_skill__skill__name", flat=True).distinct()
         existing_wanted_post_skills = PostModel.objects.values_list("wanted_skill__name", flat=True).distinct()
-        context['skills'] = SkillsModel.objects.filter(name__in=existing_offered_post_skills) | SkillsModel.objects.filter(name__in=existing_wanted_post_skills)
+        context['offered_skills'] = SkillsModel.objects.filter(name__in=existing_offered_post_skills)
+        context['wanted_skills'] = SkillsModel.objects.filter(name__in=existing_wanted_post_skills)
         return context
 
     def get_queryset(self):
@@ -35,13 +36,13 @@ class MainPage(DefaultImageMixin, ListView):
         if not user.is_authenticated:
             posts = PostModel.objects.all()
             if skill_slug:
-                posts = posts.filter(wanted_skill__slug=skill_slug)
+                posts = posts.filter(wanted_skill__slug=skill_slug) | posts.filter(offered_skill__skill__slug=skill_slug)
             return posts
         posts = PostModel.objects.exclude(author=user).exclude(responder=user)
         current_user_skills = UserSkills.objects.filter(user=user).values_list('skill', flat=True)
         posts = posts.filter(wanted_skill__in=current_user_skills)
         if skill_slug:
-            posts = posts.filter(wanted_skill__slug=skill_slug)
+            posts = posts.filter(wanted_skill__slug=skill_slug) | posts.filter(offered_skill__skill__slug=skill_slug)
         return posts
 
 
