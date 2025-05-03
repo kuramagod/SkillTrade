@@ -4,6 +4,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 import datetime
 
+from django.urls import reverse
+
 
 class User(AbstractUser):
     class Gender(models.TextChoices):
@@ -23,3 +25,6 @@ class User(AbstractUser):
         today = datetime.date.today()
         self.age = today.year - self.birth_date.year - ((today.month, today.day) < (self.birth_date.month, self.birth_date.day))
         super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('profile_page', kwargs={'username': self.username})

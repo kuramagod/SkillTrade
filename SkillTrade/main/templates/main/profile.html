@@ -67,8 +67,10 @@ Profile
                 {% for review in reviews %}
                 <div class="post">
                     <div class="user-info">
+                        <a class="username-a" href="{{ review.author.get_absolute_url }}">
                         <img src="{{ review.author.avatar.url }}" alt="Аватар">
                         <p class="username">{{ review.author.username }}</p>
+                        </a>
                     </div>
                     <div class="post-content">
                         <p>{{ review.comment }}</p>

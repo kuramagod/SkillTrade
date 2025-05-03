@@ -41,8 +41,10 @@ MainPage
             {% for post in posts %}
             <article class="post">
                 <div class="user-info">
-                    <img src="{{ post.author.avatar.url|default:default_image }}" alt="Аватар">
-                    <p class="username">{{ post.author.username }}</p>
+                    <a class="username-a" href="{{ post.author.get_absolute_url }}">
+                        <img src="{{ post.author.avatar.url|default:default_image }}" alt="Аватар">
+                        <p class="username">{{ post.author.username }}</p>
+                    </a>
                 </div>
                 <div class="post-content">
                     <p>Предлогает: {{ post.offered_skill.skill }}. Запрашивает: {{ post.wanted_skill.name }}</p>
