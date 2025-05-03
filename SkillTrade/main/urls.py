@@ -7,7 +7,7 @@ urlpatterns = [
     path('', views.MainPage.as_view(), name="main_page"),
     path('profile/<str:username>', views.ProfilePage.as_view(), name="profile_page"),
     path('request/<str:username>', views.RequestPage.as_view(), name="request_page"),
-    path('add_exchange', views.AddPost.as_view(), name='add_exchange'),
+    path('create_post', views.AddPost.as_view(), name='create_post'),
     path('create-request/<int:post_id>', views.create_request, name='create_request'),
     path('update_status/', views.update_status, name='update_status'),
     path('add_skill_profile/', views.AddSkillProfile.as_view(), name='add_skill_profile'),
@@ -16,4 +16,6 @@ urlpatterns = [
     path('start_chat/<int:request_id>', views.start_chat, name="start_chat"),
     path('chats', views.ShowChats.as_view(), name="chats"),
     path('review/<int:exchange_id>/comment/create', views.AddReview.as_view(), name="add_review"),
+    path('user_posts/<str:username>', views.UserPosts.as_view(), name="user_posts"),
+    path('post_delete/<int:pk>', views.DeletePost.as_view(), name="post_delete"),
 ]

@@ -113,6 +113,22 @@ class AddSkillProfile(DefaultImageMixin, CreateView):
         return super().form_valid(form)
 
 
+class UserPosts(LoginRequiredMixin, DefaultImageMixin, ListView):
+    model = PostModel
+    template_name = 'main/user_posts.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        user = self.request.user
+        return PostModel.objects.filter(author=user)
+
+    def dispatch(self, request, *args, **kwargs):
+        username = kwargs.get('username')
+        if request.user.username != username:
+            return HttpResponseRedirect(reverse_lazy('main_page'))
+        return super().dispatch(request, *args, **kwargs)
+
+
 class AddPost(DefaultImageMixin, CreateView):
     form_class = AddPostForm
     template_name = 'main/add_post.html'
@@ -136,6 +152,18 @@ class AddPost(DefaultImageMixin, CreateView):
         form.instance.offered_skill = offered_skill
         form.instance.wanted_skill = wanted_skill
         return super().form_valid(form)
+
+
+class DeletePost(DeleteView):
+    model = PostModel
+    http_method_names = ['post']
+
+    def get_success_url(self):
+        return reverse_lazy('user_posts', kwargs={'username': self.request.user.username})
+
+    def form_valid(self, form):
+        self.object.delete()
+        return redirect(self.get_success_url())
 
 
 class AddReview(DefaultImageMixin, CreateView):

@@ -1,0 +1,72 @@
+{% extends 'main/base.html' %}
+
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'main/css/base.css' %}">
+{% endblock %}
+
+{% block title %}
+UserPosts
+{% endblock %}
+
+{% block content %}
+<style>
+  .main-container {
+    justify-content: center;
+  }
+  .add-post-button {
+      display: inline-block;
+      background-color: #0d6efd;
+      color: white;
+      padding: 15px 25px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-bottom: 20px;
+      text-align: center;
+      transition: background-color 0.3s ease;
+      width: 700px;
+  }
+
+  .add-post-button:hover {
+      background-color: #0a58ca;
+  }
+
+  .delete-post-button {
+      display: inline-block;
+      background-color: #0d6efd;
+      color: white;
+      padding: 7px 15px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      text-align: center;
+      transition: background-color 0.3s ease;
+  }
+</style>
+<main>
+    <div class="main-container">
+        <section class="posts">
+          <h1>Ваши посты</h1>
+          <a href="{% url 'create_post' %}" class="add-post-button">Добавить пост</a>
+            {% for post in posts %}
+            <article class="post">
+                <div class="user-info">
+                    <img src="{{ post.author.avatar.url|default:default_image }}" alt="Аватар">
+                    <p class="username">{{ post.author.username }}</p>
+                </div>
+                <div class="post-content">
+                    <p>Предлогает: {{ post.offered_skill.skill }}. Запрашивает: {{ post.wanted_skill.name }}</p>
+                    <form action="{% url 'post_delete' post.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button class="delete-post-button" type="submit">Удалить</button>
+                    </form>
+                </div>
+            </article>
+            {% endfor %}
+        </section>
+    </div>
+</main>
+{% endblock %}
