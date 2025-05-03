@@ -47,7 +47,9 @@ class AddPostForm(forms.ModelForm):
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
+        user_has_skills = UserSkills.objects.filter(user=user).values_list('skill__name', flat=True) # Список имен навыков которые уже существуют у пользователя.
         self.fields['offered_skill'].queryset = UserSkills.objects.filter(user=user)
+        self.fields['wanted_skill'].queryset = SkillsModel.objects.exclude(name__in=user_has_skills)
 
 
 class AddReviewForm(forms.ModelForm):
