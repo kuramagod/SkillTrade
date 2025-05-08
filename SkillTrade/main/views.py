@@ -10,7 +10,7 @@ from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, ListView, CreateView, DeleteView
 
 
-from .forms import CreationRequestForm, AddSkillProfileForm, AddSkill, AddPostForm, AddReviewForm
+from .forms import AddSkillProfileForm, AddSkill, AddPostForm, AddReviewForm
 from .models import PostModel, ExChangeRequestModel, UserSkills, ReviewModel, SkillsModel
 from chat.models import Chat
 
@@ -182,6 +182,7 @@ class AddReview(DefaultImageMixin, CreateView):
         context = super().get_context_data(**kwargs)
         exchange = self.get_exchange()
         context['target_user'] = self.get_target_user(exchange)
+        print(exchange.reviewed_user)
         return context
 
     def form_valid(self, form):
@@ -190,8 +191,14 @@ class AddReview(DefaultImageMixin, CreateView):
         form.instance.author = current_user
         form.instance.target_user = self.get_target_user(exchange)
         form.instance.exchange = exchange
-        exchange.reviewed_user.add(current_user)
-        return super().form_valid(form)
+
+        response = super().form_valid(form)  # Сохраняем форму
+
+        exchange.reviewed_user.add(current_user)  # Добавляем пользователя, затем проверяем и удаляем обмен.
+        if exchange.reviewed_user.count() == 2:
+            exchange.delete()
+
+        return response
 
 
 class AddSkill(DefaultImageMixin, CreateView):
@@ -225,7 +232,10 @@ def start_chat(request, request_id):
         receiver = exchange.receiver
         check_name = f"Чат {exchange.sender_skill} - {exchange.receiver_skill}" # название чата которое дается при создании, для проверки
         if Chat.objects.filter(participants=current_user).filter(participants=sender).filter(name=check_name).exists():
-            chat_id = Chat.objects.filter(participants=current_user).filter(participants=sender).values()[0]['id']
+            if exchange.status != 'Активно':
+                exchange.status = 'Активно'
+                exchange.save()
+            chat_id = Chat.objects.filter(participants=current_user).filter(participants=sender).filter(name=check_name).values()[0]['id']
             return redirect(reverse_lazy('chats:chat_room', args=[chat_id]))
 
         chat = Chat.objects.create()
