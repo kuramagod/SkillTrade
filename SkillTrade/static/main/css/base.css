@@ -291,15 +291,32 @@ body {
     background-color: darkblue;
 }
 
-.accept-button {
-    background: rgb(1, 185, 47);
+.chat-button,
+.confirm-button {
+    background: blue;
     color: white;
     border: none;
     padding: 8px 12px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
-    margin-left: 180px;
+    margin-left: 5px;
+}
+
+.chat-button {
+    background: #198754;
+}
+
+.accept-button,
+ cancel-button {
+    background: rgb(255, 0, 21);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 5px;
 }
 
 .cancel-button {
@@ -310,17 +327,11 @@ body {
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
+    margin-right: 5px;
 }
 
-.confirm-button {
-    background: blue;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    margin-left: 180px;
+.accept-button {
+    background: rgb(1, 185, 47);
 }
 
 .end-button {
@@ -480,4 +491,36 @@ body {
 
 .divider {
     border-bottom: 1px solid #e5e7eb;
+}
+
+.request {
+    display: flex;
+    align-items: center;
+    background: #f9f9f9;
+    justify-content: space-between;
+    width: 100%;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.request-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.request-text {
+    width: 70%;
+}
+
+.post-buttons {
+    width: 30%;
+    display: flex;
+    justify-content: flex-end;
+    flex-shrink: 0;
 }

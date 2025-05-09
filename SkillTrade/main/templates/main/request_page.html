@@ -10,72 +10,6 @@ Profile
 {% endblock %}
 
 {% block content %}
-<style>
-    .post {
-        display: flex;
-        align-items: center;
-        background: #f9f9f9;
-        justify-content: space-between;
-        width: 100%;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        gap: 15px;
-        margin-bottom: 15px;
-    }
-
-    .post-content {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-    }
-
-    .post-text {
-        width: 70%;
-    }
-
-    .post-buttons {
-        width: 30%;
-        display: flex;
-        justify-content: flex-end;
-        flex-shrink: 0;
-    }
-
-    .chat-button,
-    .confirm-button {
-        background: blue;
-        color: white;
-        border: none;
-        padding: 8px 12px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 14px;
-        margin-left: 5px;
-    }
-
-    .chat-button {
-        background: #198754;
-    }
-
-    .accept-button,
-     cancel-button {
-        background: rgb(255, 0, 21);
-        color: white;
-        border: none;
-        padding: 8px 12px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 14px;
-        margin-right: 5px;
-    }
-
-    .accept-button {
-        background: rgb(1, 185, 47);
-    }
-
-</style>
 <main>
     <div class="profile-container">
         <!-- Блок входящих запросов -->
@@ -84,9 +18,9 @@ Profile
             <h3>Входящие запросы</h3>
             {% endif %}
             {% for request in incoming_requests %}
-                <div class="post">
-                    <div class="post-content">
-                        <p class="post-text"><a class="profile-url" href="{{ request.receiver.get_absolute_url }}">{{ request.receiver.username }}</a> откликнулся на ваше предложение ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
+                <div class="request">
+                    <div class="request-content">
+                        <p class="request-text"><a class="profile-url" href="{{ request.receiver.get_absolute_url }}">{{ request.receiver.username }}</a> откликнулся на ваше предложение ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
                         <div class="post-buttons">
                             {% if request.status == 'Ожидание' %}
                                 <button class="accept-button" data-id="{{ request.id }}" data-token="{{ csrf_token }}">
@@ -112,9 +46,9 @@ Profile
             <h3>Отправленные запросы</h3>
             {% endif %}
             {% for request in sent_requests %}
-                <div class="post">
-                    <div class="post-content">
-                        <p class="post-text">к <a class="profile-url" href="{{ request.sender.get_absolute_url }}">{{ request.sender.username }}</a>, на предложение ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }})</p>
+                <div class="request">
+                    <div class="request-content">
+                        <p class="request-text">к <a class="profile-url" href="{{ request.sender.get_absolute_url }}">{{ request.sender.username }}</a>, на предложение ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }})</p>
                         {% if request.status == 'Ожидание' %}
                             <p>Стасус: <b>{{ request.status }}</b></p>
                         {% elif request.status == 'Отклонено' %}
@@ -137,12 +71,12 @@ Profile
             <h3>Активные запросы</h3>
             {% endif %}
             {% for request in active_requests %}
-                <div class="post">
-                    <div class="post-content">
+                <div class="request">
+                    <div class="request-content">
                         {% if user == request.sender %}
-                            <p class="post-text"> Активный обмен c <a class="profile-url" href="{{ request.receiver.get_absolute_url }}">{{ request.receiver.username }}</a> ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }})</p>
+                            <p class="request-text"> Активный обмен c <a class="profile-url" href="{{ request.receiver.get_absolute_url }}">{{ request.receiver.username }}</a> ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }})</p>
                         {% else %}
-                          <p class="post-text"> Активный обмен c <a class="profile-url" href="{{ request.sender.get_absolute_url }}">{{ request.sender.username }}</a> ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
+                          <p class="request-text"> Активный обмен c <a class="profile-url" href="{{ request.sender.get_absolute_url }}">{{ request.sender.username }}</a> ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
                         {% endif %}
                         <div class="post-buttons">
                             <form class="start_chat_form" method="post" action="{% url 'start_chat' request.id %}">
@@ -176,12 +110,12 @@ Profile
             <h3>Завершенные запросы</h3>
             {% endif %}
             {% for request in completed_requests %}
-                <div class="post">
-                    <div class="post-content">
+                <div class="request">
+                    <div class="request-content">
                         {% if user == request.sender %}
-                            <p class="post-text"> Завершенный обмен с <a class="profile-url" href="{{ request.receiver.get_absolute_url }}">{{ request.receiver.username }}</a> ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }})</p>
+                            <p class="request-text"> Завершенный обмен с <a class="profile-url" href="{{ request.receiver.get_absolute_url }}">{{ request.receiver.username }}</a> ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }})</p>
                         {% else %}
-                            <p class="post-text"> Завершенный обмен с <a class="profile-url" href="{{ request.sender.get_absolute_url }}">{{ request.sender.username }}</a> ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
+                            <p class="request-text"> Завершенный обмен с <a class="profile-url" href="{{ request.sender.get_absolute_url }}">{{ request.sender.username }}</a> ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
                         {% endif %}
                         <div class="post-buttons">
                             <button class="review-button" onclick="window.location.href='{% url 'add_review' request.id %}'">
