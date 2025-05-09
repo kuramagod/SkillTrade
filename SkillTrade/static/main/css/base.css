@@ -1,0 +1,526 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.main-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+/* Стили для бокового блока категорий */
+.categories {
+    width: 30%;
+    background: #eee;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 20px; /* Закрепляем блок сверху */
+    height: fit-content;
+}
+
+.categories h3 {
+    margin-top: 0;
+}
+
+.categories ul {
+    list-style: none;
+    padding: 0;
+}
+
+.categories ul li {
+    margin: 10px 0;
+}
+
+.categories ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+.categories ul li a:hover {
+    color: blue;
+}
+
+.request-posts {
+    width: 100%;
+}
+.post {
+    display: flex;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    gap: 15px; /* Отступ между фото и текстом */
+    min-width: 700px;
+    width: 100%;
+    margin: 10px auto; /* Центрирование */
+}
+
+/* Секция с аватаром и ником */
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.user-info img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%; /* Делаем изображение круглым */
+    object-fit: cover;
+}
+
+.username {
+    margin-top: 5px;
+    font-weight: bold;
+    font-size: 14px;
+    color: black;
+}
+
+.username-a {
+    text-decoration: none;
+}
+
+.profile-url {
+    color: black;
+    text-decoration: none;
+}
+
+/* Контент поста */
+.post-content {
+    flex: 1; /* Растягивает блок с текстом */
+    display: flex;
+    flex-direction: row; /* Расположим текст и кнопку в ряд */
+    justify-content: space-between; /* Раздвигаем текст и кнопку */
+    align-items: center; /* Выравниваем по центру вертикально */
+}
+
+.post-content p {
+    margin: 0 0 10px;
+}
+
+/* Кнопка */
+.read-more {
+    background: blue;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.read-more:hover {
+    background: darkblue;
+}
+
+/* Основной контейнер */
+.profile-container {
+    max-width: 800px;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Верхняя часть профиля */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #ddd;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-info h2 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.profile-info .age {
+    color: gray;
+    font-size: 14px;
+}
+
+.profile-info .description {
+    margin-top: 5px;
+    font-size: 16px;
+}
+
+/* Блок постов */
+.profile-posts {
+    margin-top: 20px;
+}
+
+.profile-posts h3 {
+    margin-bottom: 10px;
+}
+
+/* Стили для постов */
+.post {
+    display: flex;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* Аватар и ник в постах */
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.user-info img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.username {
+    margin-top: 5px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Контент поста */
+.post-content {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.post-content p {
+    margin: 0;
+}
+
+/* Кнопка */
+.read-more {
+    background: blue;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.edit-profile-container {
+    max-width: 800px;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.edit-profile-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.edit-profile-form .form-group {
+    margin-bottom: 15px;
+}
+
+.edit-profile-form .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.edit-profile-form .form-group input[type="text"],
+.edit-profile-form .form-group input[type="email"],
+.edit-profile-form .form-group textarea,
+.edit-profile-form .form-group input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.edit-profile-form .form-group textarea {
+    resize: vertical;
+}
+
+.edit-profile-form .btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.edit-profile-form .btn:hover {
+    background-color: darkblue;
+}
+
+.chat-button,
+.confirm-button {
+    background: blue;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+.chat-button {
+    background: #198754;
+}
+
+.accept-button,
+ cancel-button {
+    background: rgb(255, 0, 21);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 5px;
+}
+
+.cancel-button {
+    background: rgb(255, 0, 21);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 5px;
+}
+
+.accept-button {
+    background: rgb(1, 185, 47);
+}
+
+.end-button {
+    background: rgb(1, 185, 47);
+    color: white;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modal-content button {
+  padding: 10px 20px;
+  margin: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#confirmBtn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+#cancelBtn {
+  background-color: #f44336;
+  color: white;
+}
+
+.review-button {
+    background: #2579d3;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 180px;
+}
+
+.chat-container {
+    display: flex;
+    justify-content: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-top: 3rem;
+}
+
+.chat-card {
+    width: 100%;
+    max-width: 42rem;
+    background-color: white;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.chat-header {
+    background-color: #2563eb;
+    color: white;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 600;
+}
+
+.chat-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.chat-item {
+    display: block;
+    padding: 1rem 1.5rem;
+    text-decoration: none;
+    color: inherit;
+}
+
+.chat-item:hover {
+    background-color: #f9fafb;
+    transition: background-color 0.2s ease;
+}
+
+.chat-item-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.chat-avatar {
+    flex-shrink: 0;
+}
+
+.chat-avatar img {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.chat-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.chat-name {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #111827;
+    margin: 0;
+}
+
+.chat-preview {
+    font-size: 0.875rem;
+    color: #6b7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+.chat-time {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    white-space: nowrap;
+}
+
+.divider {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.request {
+    display: flex;
+    align-items: center;
+    background: #f9f9f9;
+    justify-content: space-between;
+    width: 100%;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.request-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.request-text {
+    width: 70%;
+}
+
+.post-buttons {
+    width: 30%;
+    display: flex;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}

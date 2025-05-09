@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -31,12 +31,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'chat',
+    'main',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -67,16 +71,28 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'SkillTrade.wsgi.application'
-
+# WSGI_APPLICATION = 'SkillTrade.wsgi.application'
+ASGI_APPLICATION = "SkillTrade.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "SkillTrade",
+        "USER": "admin",
+        "PASSWORD": "qwe123",
+        "HOST": "127.0.0.1",
+        "PORT": "5432",
     }
 }
 
@@ -103,9 +119,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "Europe/Moscow"
 
 USE_I18N = True
 
@@ -117,7 +133,22 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+    BASE_DIR / 'static',
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.User'
+
+LOGIN_REDIRECT_URL = 'main_page'
+LOGOUT_REDIRECT_URL = 'main_page'
+LOGIN_URL = 'users:login'
+
+DEFAULT_USER_IMAGE = 'users/default.jpg'

@@ -1,0 +1,186 @@
+{% extends 'main/base.html' %}
+
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'main/css/base.css' %}">
+{% endblock %}
+
+{% block title %}
+Profile
+{% endblock %}
+
+{% block content %}
+<main>
+    <div class="profile-container">
+        <!-- Блок входящих запросов -->
+        <div class="profile-posts">
+            {% if incoming_requests %}
+            <h3>Входящие запросы</h3>
+            {% endif %}
+            {% for request in incoming_requests %}
+                <div class="request">
+                    <div class="request-content">
+                        <p class="request-text"><a class="profile-url" href="{{ request.receiver.get_absolute_url }}">{{ request.receiver.username }}</a> откликнулся на ваше предложение ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
+                        <div class="post-buttons">
+                            {% if request.status == 'Ожидание' %}
+                                <button class="accept-button" data-id="{{ request.id }}" data-token="{{ csrf_token }}">
+                                    Принять
+                                </button>
+                                <button class="cancel-button" data-id="{{ request.id }}" data-token="{{ csrf_token }}">
+                                    Отклонить
+                                </button>
+                            {% elif request.status == 'Принято' %}
+                                <form class="start_chat_form" method="post" action="{% url 'start_chat' request.id %}">
+                                    {% csrf_token %}
+                                    <button class="read-more start_chat_form-btn" type="submit">Начать чат</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- Блок отправленых запросов -->
+        <div class="profile-posts">
+            {% if sent_requests %}
+            <h3>Отправленные запросы</h3>
+            {% endif %}
+            {% for request in sent_requests %}
+                <div class="request">
+                    <div class="request-content">
+                        <p class="request-text">к <a class="profile-url" href="{{ request.sender.get_absolute_url }}">{{ request.sender.username }}</a>, на предложение ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }})</p>
+                        {% if request.status == 'Ожидание' %}
+                            <p>Стасус: <b>{{ request.status }}</b></p>
+                        {% elif request.status == 'Отклонено' %}
+                            <p>Стасус: <b>{{ request.status }}</b></p>
+                        {% elif request.status == 'Принято' %}
+                            <form class="start_chat_form" method="post" action="{% url 'start_chat' request.id %}">
+                                {% csrf_token %}
+                                <button class="read-more start_chat_form-btn" type="submit">
+                                    Начать чат
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- Блок активные запросы -->
+        <div class="profile-posts">
+            {% if active_requests %}
+            <h3>Активные запросы</h3>
+            {% endif %}
+            {% for request in active_requests %}
+                <div class="request">
+                    <div class="request-content">
+                        {% if user == request.sender %}
+                            <p class="request-text"> Активный обмен c <a class="profile-url" href="{{ request.receiver.get_absolute_url }}">{{ request.receiver.username }}</a> ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }})</p>
+                        {% else %}
+                          <p class="request-text"> Активный обмен c <a class="profile-url" href="{{ request.sender.get_absolute_url }}">{{ request.sender.username }}</a> ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
+                        {% endif %}
+                        <div class="post-buttons">
+                            <form class="start_chat_form" method="post" action="{% url 'start_chat' request.id %}">
+                                {% csrf_token %}
+                                <button class="chat-button" type="submit">
+                                    Чат
+                                </button>
+                            </form>
+                            <button class="confirm-button" id="openModalBtn">
+                                Завершить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="myModal" class="modal">
+                  <div class="modal-content">
+                    <h2>Вы хотите завершить обмен?</h2>
+                    <button class="end-button" data-id="{{ request.id }}" data-token="{{ csrf_token }}">
+                        Принять
+                    </button>
+                    <button id="cancelBtn">
+                        Отмена
+                    </button>
+                  </div>
+                </div>
+            {% endfor %}
+        </div>
+         <!-- Блок завершенные запросы -->
+        <div class="profile-posts">
+            {% if completed_requests %}
+            <h3>Завершенные запросы</h3>
+            {% endif %}
+            {% for request in completed_requests %}
+                <div class="request">
+                    <div class="request-content">
+                        {% if user == request.sender %}
+                            <p class="request-text"> Завершенный обмен с <a class="profile-url" href="{{ request.receiver.get_absolute_url }}">{{ request.receiver.username }}</a> ({{ request.sender_skill.skill }} на {{ request.receiver_skill.skill }})</p>
+                        {% else %}
+                            <p class="request-text"> Завершенный обмен с <a class="profile-url" href="{{ request.sender.get_absolute_url }}">{{ request.sender.username }}</a> ({{ request.receiver_skill.skill }} на {{ request.sender_skill.skill }})</p>
+                        {% endif %}
+                        <div class="post-buttons">
+                            <button class="review-button" onclick="window.location.href='{% url 'add_review' request.id %}'">
+                                Отзыв
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".accept-button, .cancel-button, .end-button").forEach(button => {
+        button.addEventListener("click", function () {
+            let requestId = this.getAttribute("data-id");
+            let csrfToken = this.getAttribute("data-token");
+
+            let status = ""; // Отбираем нужное действие по нажатии кнопки
+            if (this.classList.contains("accept-button")) {
+                status = "Принято";
+            } else if (this.classList.contains("cancel-button")) {
+                status = "Отклонено";
+            } else if (this.classList.contains("end-button")) {
+                status = "Завершено";
+            }
+
+            fetch("/update_status/", { // Отправляем запрос по адресу /update_status/ с методом POST
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "Content-Type": "application/x-www-form-urlencoded" // Формат данных, в котором мы отправляем тело запроса
+                },
+                body: new URLSearchParams({
+                    request_id: requestId, // ID обмена
+                    status: status // Обновляемый статус
+                })
+            })
+            .then(() => {
+                location.reload(); // Перезагрузка страницы
+            });
+        });
+    });
+
+    const modal = document.getElementById("myModal");
+    const btn = document.getElementById("openModalBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+
+    cancelBtn.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+    });
+</script>
+{% endblock %}

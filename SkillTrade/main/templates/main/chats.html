@@ -1,0 +1,50 @@
+{% extends 'main/base.html' %}
+
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'main/css/base.css' %}">
+{% endblock %}
+
+{% block title %}
+Chats
+{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+  <div class="chat-card">
+    <div class="chat-header">
+        Мои чаты
+    </div>
+    <ul class="chat-list">
+        {% for chat in chats %}
+        <li class="divider">
+            <a href="{% url 'chats:chat_room' chat.id %}" class="chat-item">
+                <div class="chat-item-content">
+                    {% for part in chat.participants.all %}
+                        {% if part != user %}
+                            {% if part.avatar %}
+                                <div class="chat-avatar">
+                                    <img src="{{ part.avatar.url }}" alt="Аватар пользователя">
+                                </div>
+                            {% else %}
+                                <div class="chat-avatar">
+                                    <img src="{{ default_image }}" alt="Аватар по умолчанию">
+                                </div>
+                            {% endif %}
+                            <div class="chat-info">
+                                <p class="chat-name">{{ part.first_name }} {{ part.last_name }}</p>
+                                <p class="chat-preview">{% if not chat.messages.last.content %} {{ chat.name }} {% endif %} {{ chat.messages.last.content }}</p>
+                            </div>
+                            <div class="chat-time">
+                                {{ chat.messages.last.timestamp|date:"H:i" }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

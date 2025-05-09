@@ -1,0 +1,43 @@
+{% extends 'main/base.html' %}
+
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'main/css/form.css' %}">
+{% endblock %}
+
+{% block title %}
+Register
+{% endblock %}
+
+
+{% block content %}
+<div class="main-container">
+    <section class="posts">
+        <p class="text-auth">Регистрация</p>
+        <form class="edit-profile-form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for field in form %}
+            <p>
+                <label class="form-label" for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                </label>
+
+                {% if field.name == 'birth_date' %}
+                <input type="date"
+                       id="{{ field.id_for_label }}"
+                       name="{{ field.name }}"
+                       value="{{ field.value|date:'Y-m-d' }}"
+                       min="1900-01-01"
+                       class="form-control"/>
+                {% else %}
+                {{ field }}
+                {% endif %}
+                <div class="form-error">{{ field.errors }}</div>
+            </p>
+            {% endfor %}
+            <div class="form-error">{{ form.non_field_errors }}</div>
+            <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+        </form>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'main/base.html' %}
+
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'main/css/base.css' %}">
+{% endblock %}
+
+{% block title %}
+Add Skill Profile
+{% endblock %}
+
+{% block content %}
+<main>
+      <div class="profile-container">
+            <div class="profile-posts">
+                <h3>Добавление навыка пользователю</h3>
+                <div class="post">
+                    <div class="post-content">
+                        <form id="skill-form" action="{% url 'add_skill_profile' %}" method="POST">
+                            {% csrf_token %}
+                             {{ form.as_p }}
+                            <button type="submit">Сохранить</button>
+                            <p>Если в списке нету нужного навыка - <a href="{% url 'add_skill' %}">Добавьте</a></p>
+                        </form>
+                    </div>
+                </div>
+        </div>
+</main>
+{% endblock %}
+{% block extra_js %}
+
+{% endblock %}

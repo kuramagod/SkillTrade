@@ -1,0 +1,25 @@
+{% extends 'main/base.html' %}
+
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'main/css/form.css' %}">
+{% endblock %}
+
+{% block title %}
+Login
+{% endblock %}
+
+
+{% block content %}
+<div class="main-container">
+    <section class="posts">
+        <p class="text-auth">Авторизация</p>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}"/>
+            {{ form.as_p }}
+            <p><button  type="submit" class="btn btn-primary"">Войти</button></p>
+        </form>
+    </section>
+</div>
+{% endblock %}

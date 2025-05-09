@@ -1,0 +1,85 @@
+{% extends 'main/base.html' %}
+
+{{ default_image }}
+{{ MEDIA_URL }}
+
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'main/css/base.css' %}">
+{% endblock %}
+
+{% block title %}
+Profile
+{% endblock %}
+
+{% block content %}
+<main>
+      <div class="profile-container">
+            <!-- Блок профиля -->
+            <div class="profile-header">
+                {% if author.username == user.username %} <a href="{% url 'users:profile_edit' user.username %}" class="profile-link"> {% endif %}
+                {% if user.avatar %}
+                <img src="{{ author.avatar.url }}" alt="Аватар" class="profile-avatar"></a>
+                {% else %}
+                <img src="{{ default_image }}" alt="Аватар" class="profile-avatar"></a>
+                {% endif %}
+                <div class="profile-info">
+                    <h2>{{ author.first_name }} {{ author.last_name }}</h2>
+                    <p class="age">
+                        Возраст: {{ author.age }}
+                        {% if author.gender != 'N' %}<br>Пол: {{ author.get_gender_display }} {% endif %}
+                        {% if author.location %}<br>Город: {{ author.location }}{% endif %}
+                        {% if author.rating != 0 %}<br>Рейтинг: {{ author.rating }}{% endif %}
+                    </p>
+                    {% if author.description %}
+                    <p class="description">
+                        {{ author.description }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+          <!-- Блок навыков-->
+            <div class="user-skills">
+                <h3>Навыки</h3>
+                <ul>
+                     {% for skill in author.skills.all %}
+                     <li>{{ skill.skill }}: {{ skill.level }}
+                         <form action="{% url 'delete_skill' skill.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        {% if author.username == user.username %}
+                        <button type="submit">удалить</button>
+                        {% endif %}
+                         </form></li>
+                     {% empty %}
+                         <li>Нет навыков</li>
+                     {% endfor %}
+                    {% if author.username == user.username %}
+                    <a href="{% url 'add_skill_profile' %}">
+                        <button type="button">Добавить навык</button>
+                    </a>
+                    {% endif %}
+                 </ul>
+            </div>
+            {% if reviews %}
+            <!-- Блок отзывов-->
+            <div class="profile-posts">
+                <h3>Отзывы о пользователе</h3>
+                {% for review in reviews %}
+                <div class="post">
+                    <div class="user-info">
+                        <a class="username-a" href="{{ review.author.get_absolute_url }}">
+                        <img src="{{ review.author.avatar.url }}" alt="Аватар">
+                        <p class="username">{{ review.author.username }}</p>
+                        </a>
+                    </div>
+                    <div class="post-content">
+                        <p>{{ review.comment }}</p>
+                        <p>Оценка {{ review.rating }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}
